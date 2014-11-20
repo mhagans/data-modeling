@@ -2,22 +2,33 @@ package DM;
 
 import java.sql.DriverManager;
 import java.sql.Connection;
+import java.sql.SQLException;
+
 
 
 public class ConnectDB{
     
-    public static void main(String[] args){
-        String userName="teama1dm2f14";//oracle account user name goes here
-        String password="team1bcchlrt";//password goes here
-        String url="jdbc:oracle:thin:@olympia.unfcsd.unf.edu:1521:dworcl";
+    
+    public static void main(String[] args)throws SQLException{
+        Connection conn=getConn();
+        conn.close();
+        while(1==1){
+        new MainMenu();
+        }
+    }
+    
+    public static Connection getConn(){
+        String userName;
+        String password;
+        String url;
+        userName="teama1dm2f14";//oracle account user name goes here
+        password="team1bcchlrt";//password goes here
+        url="jdbc:oracle:thin:@olympia.unfcsd.unf.edu:1521:dworcl";
         Connection conn;
         try{
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-            //Can use either one need to test which will work. The one below was the one we used in SE
-            //Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
             conn=DriverManager.getConnection(url, userName, password);
-            System.out.println("Connected to DB");
-            conn.close();
+            return conn;
         }
         catch (Exception ie) {
             if (ie.getMessage().equals("IO Error: The Network Adapter could not establish the connection")) {
@@ -27,6 +38,8 @@ public class ConnectDB{
             } else {
                 System.out.println(ie.getMessage());
             }
+            System.exit(1);
         }
+        return null;
     }
 }
