@@ -19,6 +19,7 @@ public class Faculty {
         int nextYear = year+1;
         String term = null;
         String courseRelease = null;
+        String sabbatical = null;
 
         BufferedReader br;
         ArrayList<String> courseList;
@@ -66,16 +67,28 @@ public class Faculty {
             try {
                 numberOfCourses = Integer.parseInt(br.readLine());
             } catch (IOException e) {
-                System.out.println("IO error trying to read selection!");
+                System.out.println("IO error trying to read selection: " + e);
                 System.exit(1);
             }
             //Course Release
             System.out.println("Enter Yes or No if Course Release is Expected.\n");
             br = new BufferedReader(new InputStreamReader(System.in));
 
+            try {
+                courseRelease = br.readLine();
+            } catch (IOException e) {
+                System.out.println("IO error trying to read selection: " + e);
+            }
+
             // Sabbatical
             System.out.println("Enter Yes or No if Sabbatical is Expected\n");
             br = new BufferedReader(new InputStreamReader(System.in));
+
+            try {
+                sabbatical = br.readLine();
+            } catch (IOException e) {
+                System.out.println("IO error trying to read selection: " + e);
+            }
 
             //Professional Development Leave
             System.out.println("Enter Yes or No if Professional Development is Expected\n");
