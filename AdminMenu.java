@@ -6,6 +6,12 @@ import LoginServices.AccessLevel;
 
 public class AdminMenu
 {
+    /*
+    * Create new AdminMenu, call the run method;
+    * AdminMenu adminMenu = new AdminMenu();
+    * adminMenu.run();
+    */
+
     private Scanner in;
 
     private enum Action {
