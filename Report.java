@@ -176,8 +176,9 @@ public class Report {
     Gets courses as above but only displays the course and student and/or faculty if those faculty and
     * students have the preffered day choosen.
     */
-    
-    public void DL() {
+    //might need to figure out days and times problems (faculty adn students for everything but summer
+    //have to choose the same days and times possiblilityes ( might have to restrict to only Pref1)
+    public void DL() {//going to have a problem if summer terms and D2 and D3 will be null and will always be equal between faculty and student
         Connection conn = ConnectDB.getConn();
         String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3;
         int sig = 0, sig2 = 0, rank, year;
