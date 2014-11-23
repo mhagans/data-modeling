@@ -53,8 +53,9 @@ public class AdminMenu
 
     private void createUser(AccessLevel accessLevel)
     {
-        System.out.println("Creating new " + accessLevel.name() " level user");
+        System.out.println("Creating new " + accessLevel.name().toUpperCase() " level user");
         System.out.println("---------------------------------------------");
+        
         System.out.print("Enter the users username: ");
 
         String username = in.next();
@@ -63,6 +64,14 @@ public class AdminMenu
 
         String password = in.next();
 
-        LoginServices.createUser(username, password, accessLevel);
+        System.out.print("Enter the users full name: ");
+
+        String name = in.next();
+
+        System.out.print("Enter the users area of expertise: ");
+        
+        String areaOfExpertise = in.next();
+
+        LoginServices.createUser(username, password, name, areaOfExpertise accessLevel);
     }
 }
