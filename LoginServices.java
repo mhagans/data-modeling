@@ -13,13 +13,17 @@ import java.util.Scanner;
  */
 public class LoginServices
 {
+    public enum AccessLevel
+    {
+        FACULTY, ADMIN
+    }
     /**
      * Requests access to secured menu.
      *
-     * @param accessLevel Access level requested. 0 = Faculty, 1 = Administrator.
+     * @param accessLevel Access level requested.
      * @return Returns username if successful, otherwise null.
      */
-    private static boolean login(int accessLevel)
+    private static boolean login(AccessLevel accessLevel)
     {
         String username = getUsername(accessLevel);
         if(username == null)
@@ -45,7 +49,7 @@ public class LoginServices
      * @param accessLevel Access level requested. 0 = Faculty, 1 = Administrator.
      * @return Username for user if successful, otherwise null.
      */
-    private static String getUsername(int accessLevel)
+    private static String getUsername(AccessLevel accessLevel)
     {
         Scanner input = new Scanner(System.in);
         System.out.print("Please enter your username: ");
@@ -63,7 +67,7 @@ public class LoginServices
 
                 if(rs.getString("name") != null) //Username found in database
                 {
-                    if(rs.getInt("Permission") == accessLevel) //User has appropriate access level.
+                    if(rs.getInt("Permission") == accessLevel.ordinal()) //User has appropriate access level.
                     {
                         conn.close();
                         return username;
@@ -103,7 +107,7 @@ public class LoginServices
      */
     private static boolean getPassword(String username)
     {
-        //Request username
+        //Request password
         Scanner input = new Scanner(System.in);
         System.out.print("Please enter your password: ");
         String password = input.nextLine();
@@ -152,8 +156,42 @@ public class LoginServices
      */
     private static boolean updatePassword(String username)
     {
-        //TODO: Request new password.
-        //TODO: Store new password.
+        //Request new password
+        Scanner input = new Scanner(System.in);
+        System.out.print("Please enter your password: ");
+        String newPassword = input.nextLine();
+
+        //Store new password.
+        try
+        {
+            Connection conn = ConnectDB.getConn();
+            if(conn != null) //Successfully connected to database
+            {
+                String update = "UPDATE id SET password ='" + newPassword + "' WHERE name = '" + username + "'";
+                Statement stmt = conn.createStatement();
+                try
+                {
+                    stmt.executeUpdate(update);
+                }
+                catch(SQLException e)
+                {
+                    System.out.println("Error updating password.");
+                    conn.close();
+                    return false;
+                }
+                conn.close();
+                return true;
+            }
+            else //Failed to connect to database
+            {
+                System.out.println("Unable to connect to login server.");
+                return false;
+            }
+        }
+        catch(SQLException sqlException)
+        {
+            System.out.println(sqlException.getMessage());
+        }
         return false;
     }
 }
