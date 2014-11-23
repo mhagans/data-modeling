@@ -18,8 +18,29 @@ public class LoginServices
 {
     public enum AccessLevel
     {
-        FACULTY, ADMIN
+        FACULTY = 1, ADMIN
     }
+
+    /**
+     * Requests access to secured menu.
+     *
+     * @param accessLevel Access level requested.
+     * @return Returns username if successful, otherwise null.
+     */
+    public static void createUser(String username, String name, String degree, String password, AccessLevel accessLevel)
+    {
+        String query = String.format("INSERT INTO id (id, name, degree, password, Permission) values %s %s %s %s %i;",
+            username, name, degree, password, accessLevel.ordinal); 
+
+        Connection connection = ConnectDB.getConn();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+
+        System.out.println("User was created successfully");
+
+        connection.close();
+    }    
+
     /**
      * Requests access to secured menu.
      *
@@ -64,11 +85,11 @@ public class LoginServices
             Connection conn = ConnectDB.getConn();
             if(conn != null) //Successfully connected to database
             {
-                String query = "SELECT name, Permission FROM id WHERE name = '" + username + "'";
+                String query = "SELECT id, Permission FROM id WHERE id = '" + username + "'";
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(query);
 
-                if(rs.getString("name") != null) //Username found in database
+                if(rs.getString("id") != null) //Username found in database
                 {
                     if(rs.getInt("Permission") == accessLevel.ordinal()) //User has appropriate access level.
                     {
@@ -122,7 +143,7 @@ public class LoginServices
             if(conn != null) //Successfully connected to database
             {
                 //Pull user password from database
-                String query = "SELECT password FROM id WHERE name = '" + username + "'";
+                String query = "SELECT password FROM id WHERE id = '" + username + "'";
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(query);
                 try
@@ -181,7 +202,7 @@ public class LoginServices
                 Statement stmt = conn.createStatement();
                 try
                 {
-                    stmt.executeUpdate("UPDATE id SET password ='" + encryptPassword(newPassword) + "' WHERE name = '" + username + "'");
+                    stmt.executeUpdate("UPDATE id SET password ='" + encryptPassword(newPassword) + "' WHERE id = '" + username + "'");
                 }
                 catch(Exception e)
                 {
