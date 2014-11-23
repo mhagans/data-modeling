@@ -20,7 +20,7 @@ public class MainMenu {
                 case "2":
                     break;
                 case "3":
-                    AdminMenu blah=new AdminMenu();
+                    new AdminMenu();
                     break;
                 case "4":
                     System.exit(1);
