@@ -1,5 +1,8 @@
 package DM;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -122,13 +125,21 @@ public class LoginServices
                 String query = "SELECT password FROM id WHERE name = '" + username + "'";
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(query);
-
-                if(password.equals(rs.getString("password"))) //Correct password entered
+                try
                 {
-                    conn.close();
-                    return true;
+                    if(encryptPassword(password).equals(rs.getString("password"))) //Correct password entered
+                    {
+                        conn.close();
+                        return true;
+                    }
+                    else //Incorrect password entered.
+                    {
+                        System.out.println("Invalid password.");
+                        conn.close();
+                        return false;
+                    }
                 }
-                else //Incorrect password entered.
+                catch(Exception e)
                 {
                     System.out.println("Invalid password.");
                     conn.close();
@@ -167,13 +178,12 @@ public class LoginServices
             Connection conn = ConnectDB.getConn();
             if(conn != null) //Successfully connected to database
             {
-                String update = "UPDATE id SET password ='" + newPassword + "' WHERE name = '" + username + "'";
                 Statement stmt = conn.createStatement();
                 try
                 {
-                    stmt.executeUpdate(update);
+                    stmt.executeUpdate("UPDATE id SET password ='" + encryptPassword(newPassword) + "' WHERE name = '" + username + "'");
                 }
-                catch(SQLException e)
+                catch(Exception e)
                 {
                     System.out.println("Error updating password.");
                     conn.close();
@@ -190,8 +200,30 @@ public class LoginServices
         }
         catch(SQLException sqlException)
         {
-            System.out.println(sqlException.getMessage());
+            sqlException.printStackTrace();
         }
         return false;
+    }
+
+    private static String encryptPassword(String password)
+    {
+        String salt = "&y81*d5jp8dn4n0@-$u-_)w30+j9*lksh)r$c&2v(bu#%$8!2t";
+        password += salt;
+        try
+        {
+            //Create MessageDigest object for MD5
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+
+            //Update input string in message digest
+            digest.update(password.getBytes(), 0, password.length());
+
+            //Converts message digest value in base 16 (hex)
+            return new BigInteger(1, digest.digest()).toString(16);
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
