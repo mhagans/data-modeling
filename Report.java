@@ -43,7 +43,7 @@ public class Report {
                     CL();
                     break;
                 case "2":
-                    //DL();
+                    DL();
                     break;
                 case "3":
                     //TL();
@@ -152,6 +152,7 @@ public class Report {
                                     + t1 + ", " + t2 + ", " + "t3\n");
                         }
                         ss.close();
+                        
                     }
                     is.close();
 
@@ -171,8 +172,11 @@ public class Report {
             System.out.println(e);
         }
     }
-    //gets the courses where the students and faculty both prefered it on the same day, ordered by that day
-
+    /*
+    Gets courses as above but only displays the course and student and/or faculty if those faculty and
+    * students have the preffered day choosen.
+    */
+    
     public void DL() {
         Connection conn = ConnectDB.getConn();
         String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3;
@@ -187,8 +191,9 @@ public class Report {
             it = conn.createStatement();
             st = conn.createStatement();
             ResultSet cs, fcs, is, ss;
+            System.out.println("Days: \n");
             for (int i = 0; i < 6; i++) {
-
+                System.out.println(days+"\n");
                 cs = ct.executeQuery(CorQ);
                 while (cs.next()) {
                     cn = cs.getString("course_number");
@@ -239,10 +244,13 @@ public class Report {
                                     }
                                     System.out.println(year + " " + id + " " + name + " " + degree + " preffered times: " + t1 + ", " + t2 + ", " + t3);
                                 }
-
+                                
                             }
+                            ss.close();
                         }
+                        is.close();
                     }
+                    fcs.close();
                     sig2 = 0;
 
                     fcs = ct.executeQuery(FacCQ + cn + "' and term='" + term + "' order by year");
@@ -294,17 +302,172 @@ public class Report {
                                 }
 
                             }
+                            ss.close();
                         }
+                        is.close();
                     }
+                    fcs.close();
                     sig2 = 0;
                     sig = 0;
                 }
+                cs.close();
             }
+            ct.close();
+            fct.close();
+            it.close();
+            st.close();
+            conn.close();
         } catch (SQLException e) {
+            System.out.println(e);
         }
-        //String[] times={"Morning", "Afternoon","Evening"};
 
         //select courses and stududent adn faculty as above
         //only display faculty and/or student info if they have the day as one of their pref
+    }
+
+    //same as above but 
+    public void TL() {
+        Connection conn = ConnectDB.getConn();
+        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3;
+        int sig = 0, sig2 = 0, rank, year;
+
+        Statement dt = null, ct = null, fct = null, it = null, st = null;
+        //hard code going through list of days
+        String[] times = {"Morning", "Afternoon", "Evening"};
+        try {
+            ct = conn.createStatement();
+            fct = conn.createStatement();
+            it = conn.createStatement();
+            st = conn.createStatement();
+            ResultSet cs, fcs, is, ss;
+            System.out.println("Times: \n");
+            for (int i = 0; i < 3; i++) {
+                System.out.println(times + "\n");
+                cs = ct.executeQuery(CorQ);
+                while (cs.next()) {
+                    cn = cs.getString("course_number");
+                    term = cs.getString("term");
+
+                    fcs = ct.executeQuery(StudCQ + cn + "' and term='" + term + "' order by year");
+                    while (fcs.next()) {
+                        id = fcs.getString("name");
+                        year = fcs.getInt("year");
+
+                        is = it.executeQuery(IdQ + id + "'");
+                        if (is.next()) {//should always occur
+                            name = is.getString("name");
+                            degree = is.getString("degree");
+
+                            ss = st.executeQuery(STDQ + id + "'"
+                                    + " and year=" + year + " and term='" + term + "'");
+                            if (ss.next()) {
+                                d1 = ss.getString(
+                                        "day_1");
+                                d2 = ss.getString(
+                                        "day_2");
+                                d3 = ss.getString(
+                                        "day_3");
+                                t1 = ss.getString(
+                                        "time_1");
+                                t2 = ss.getString(
+                                        "time_2");
+                                t3 = ss.getString(
+                                        "time_3");
+
+                                if (d2.equals("NULL")) {
+                                    d2 = "";
+                                }
+
+                                if (d3.equals("NULL")) {
+                                    d3 = "";
+                                }
+
+                                if (d1.equals(times[i]) || d2.equals(times[i]) || d3.equals(times[i])) {
+                                    if (sig == 0) {
+                                        sig = 1;
+                                        System.out.println("Course: " + cn + " term: " + term);
+                                    }
+                                    if (sig2 == 0) {
+                                        sig2 = 1;
+                                        System.out.println("Student: \n");
+                                    }
+                                    System.out.println(year + " " + id + " " + name + " " + degree + " preffered times: " + t1 + ", " + t2 + ", " + t3);
+                                }
+
+                            }
+                            ss.close();
+                        }
+                        is.close();
+                    }
+                    fcs.close();
+                    sig2 = 0;
+
+                    fcs = ct.executeQuery(FacCQ + cn + "' and term='" + term + "' order by year");
+                    while (fcs.next()) {
+                        id = fcs.getString("name");
+                        year = fcs.getInt("year");
+
+                        is = it.executeQuery(IdQ + id + "'");
+                        if (is.next()) {//should always occur
+                            name = is.getString("name");
+                            degree = is.getString("degree");
+
+
+                            ss = st.executeQuery(FTDQ + id + "'"
+                                    + " and year=" + year + " and term='" + term + "'");
+                            if (ss.next()) {
+                                d1 = ss.getString(
+                                        "day_1");
+                                d2 = ss.getString(
+                                        "day_2");
+                                d3 = ss.getString(
+                                        "day_3");
+                                t1 = ss.getString(
+                                        "time_1");
+                                t2 = ss.getString(
+                                        "time_2");
+                                t3 = ss.getString(
+                                        "time_3");
+                                rank = ss.getInt("rank");
+
+                                if (d2.equals("NULL")) {
+                                    d2 = "";
+                                }
+
+                                if (d3.equals("NULL")) {
+                                    d3 = "";
+                                }
+
+                                if (d1.equals(times[i]) || d2.equals(times[i]) || d3.equals(times[i])) {
+                                    if (sig == 0) {
+                                        sig = 1;
+                                        System.out.println("Course: " + cn + " term: " + term);
+                                    }
+                                    if (sig2 == 0) {
+                                        sig2 = 1;
+                                        System.out.println("Faculty: \n");
+                                    }
+                                    System.out.println(year + " " + id + " " + name + " " + degree + "rank: " + rank + " preffered times: " + t1 + ", " + t2 + ", " + t3);
+                                }
+
+                            }
+                            ss.close();
+                        }
+                        is.close();
+                    }
+                    fcs.close();
+                    sig2 = 0;
+                    sig = 0;
+                }
+                cs.close();
+            }
+            ct.close();
+            fct.close();
+            it.close();
+            st.close();
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
     }
 }
