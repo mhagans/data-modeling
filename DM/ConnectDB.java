@@ -7,8 +7,8 @@ import java.sql.Connection;
 public class ConnectDB{
     
     public static void main(String[] args){
-        String userName="";//oracle account user name goes here
-        String password="";//password goes here
+        String userName="teama1dm2f14";//oracle account user name goes here
+        String password="team1bcchlrt";//password goes here
         String url="jdbc:oracle:thin:@olympia.unfcsd.unf.edu:1521:dworcl";
         Connection conn;
         try{
