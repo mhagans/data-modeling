@@ -126,6 +126,8 @@ public class Faculty {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                count++;
+
             }
 
             // Course Rankings choose top 5

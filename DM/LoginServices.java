@@ -18,7 +18,7 @@ public class LoginServices
 {
     public enum AccessLevel
     {
-        FACULTY = 1, ADMIN
+        //FACULTY = 1, ADMIN
     }
 
     /**
@@ -27,14 +27,18 @@ public class LoginServices
      * @param accessLevel Access level requested.
      * @return Returns username if successful, otherwise null.
      */
-    public static void createUser(String username, String name, String degree, String password, AccessLevel accessLevel)
-    {
-        String query = String.format("INSERT INTO id (id, name, degree, password, Permission) values %s %s %s %s %i;",
-            username, name, degree, password, accessLevel.ordinal); 
+    public static void createUser(String username, String name, String degree, String password, AccessLevel accessLevel) throws SQLException {
+       // String query = String.format("INSERT INTO id (id, name, degree, password, Permission) values %s %s %s %s %i;",
+         //   username, name, degree, password, accessLevel.ordinal);
 
         Connection connection = ConnectDB.getConn();
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //   ResultSet resultSet = statement.executeQuery(query);
 
         System.out.println("User was created successfully");
 
