@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 //Student menu; gets list of students, displays students allows a student to be selected, allows a student to be created
 //try to only run this once
@@ -47,7 +48,7 @@ public class StudentMenu {
     //Constructor builds and populates linked list of student objects
     StudentMenu(){
     	Statement stmt = null;
-    	String query = "SELECT name FROM id WHERE Permission = 0";
+    	String query = "SELECT id FROM id WHERE Permission = 0";
     	
     	LinkIterator iterator = new LinkIterator();
     	
@@ -57,7 +58,7 @@ public class StudentMenu {
     		 ResultSet rs = stmt.executeQuery(query);   		 
     		 while (rs.next()) {
     			 Student student = new Student();
-    			 student.setName(rs.getString("name"));
+    			 student.setID(rs.getString("id"));
     			 Link link = new Link();
     			 link.setStudent(student);
     			 
@@ -88,7 +89,73 @@ public class StudentMenu {
         }
     }
     
-    public void displayStudentMenu(){
+    public void selectStudent(){
+    	System.out.println("Please select a student ID:\n");
+    	Scanner sc = new Scanner(System.in);
+    	
+    	String lookup = sc.next();
+    	
+    	//look through students to see if an ID matches
+    	while((studentlinkedlist.getcurrentlink().getStudent().getID() != lookup) && studentlinkedlist.getcurrentlink() != null){
+    		studentlinkedlist.nextlink();
+    	}
+    	//if the list is exhausted and there was no match, reset the iterator, ask create new student
+    	if(studentlinkedlist.getcurrentlink() == null){
+    		studentlinkedlist.resetIterator();
+    		system.out.println("A match wasn't found, create new student?(y/n)\n");
+    		String selection = sc.next();
+    		if(selection.toLowerCase() == "yes" || "y"){
+    			//go to create student method
+    			
+    		}
+    		else if(selection.toLowerCase() == "no" || "n"){
+    			//break out?
+    			break;
+    		}
+    		else{
+    			System.out.println("not a valid input\n");
+    		}
+    	}
+    	//if a match is found, reset iterator, go to students info method
+    	else if(student.linkedlist.getcurrentlink().getStudent().getID() == lookup){
+    		studentlinkedlist.resetIterator();
+    		system.out.println("Match found\n")
+    		//go to a method that displays students info
+    	}
+    	else{
+    		System.out.println("A student wasnt found and end of list didnt happen, welp\n");
+    	}
+    }
+    
+    //A method that displays student info
+    public void displayStudentInfo(String s){
+    	
+    }
+    //A method that creates student
+    public void createStudent(){
+    	//get all the info to create a student first
+    	Scanner sc = new Scanner(system.in);
+    	System.out.println("Student name?\n");
+    	String sname = sc.next();    	
+    	//make sure it fits
+    	while(sname.length() > 110){
+    		System.out.printlin("Name is too long, please adjust\n");
+    		sname = sc.next();
+    	}
+    	System.out.println("Student degree?\n")
+    	String sdegree = sc.next();
+    	System.out.println("Student year?\n");
+    	String syear = sc.next();
+    	
+    	//prefered times? need clarification on this
+    	//open the db connection
+    	openDBcon();
+    	Statement stmt = null;
+    	String query = "";
+    }
+    
+   /* Disp student menu mothballed, students selected by direct id
+    * public void displayStudentMenu(){
     	
     	int n = 1;
     	System.out.println("Hello, please select a student, or create a new one:\n");		//friendly message
@@ -98,7 +165,8 @@ public class StudentMenu {
     		n++; //increment the index
     	}
     	System.out.println("Create new student (type 'new')\n");		//create new dialog
-    }    
+    }   
+    */ 
 }
 
 class Link{
