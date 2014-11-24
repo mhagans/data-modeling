@@ -13,7 +13,7 @@ public class Faculty {
 
 
     //Menu Start
-    public static void main(String[] args){
+    public Faculty(){
         // Variables
         int selection = 0;
         int numberOfCourses = 0;

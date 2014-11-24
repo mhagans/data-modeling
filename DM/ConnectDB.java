@@ -10,8 +10,8 @@ public class ConnectDB{
     
     
     public static void main(String[] args)throws SQLException{
-        Connection conn=getConn();
-        conn.close();
+       // Connection conn=getConn();
+        //conn.close();
         while(1==1){
         new MainMenu();
         }
