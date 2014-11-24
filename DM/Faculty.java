@@ -1,3 +1,5 @@
+package DM;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,7 +22,8 @@ public class Faculty {
         String term = null;
         String courseRelease = null;
         String sabbatical = null;
-
+        String profDevelopment;
+        int[] priority = new int[3];
         BufferedReader br;
         ArrayList<String> courseList;
 
@@ -94,9 +97,46 @@ public class Faculty {
             System.out.println("Enter Yes or No if Professional Development is Expected\n");
             br = new BufferedReader(new InputStreamReader(System.in));
 
-            // Scheduling Factors Importance Rank Order(1-3)
+            try {
+                profDevelopment = br.readLine();
+            } catch (IOException e) {
+                System.out.println("IO error trying to read selection: " + e);
+            }
 
-            //
+            // Scheduling Factors Importance Rank Order(1-3)
+            System.out.println("Rank Your Scheduling Factors Importance by rank order 1-3 with 1 being the highest");
+            int count = 0;
+            String prefTitle = null;
+            while(count != 3){
+                switch (count){
+                    case 0:
+                        prefTitle = "Course Preference";
+                        break;
+                    case 1:
+                       prefTitle = "Days of the Week";
+                        break;
+                    case 2:
+                       prefTitle = "Times of the Day";
+                }
+                System.out.println(prefTitle);
+                br = new BufferedReader(new InputStreamReader(System.in));
+
+                try {
+                    priority[count] = Integer.parseInt(br.readLine());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // Course Rankings choose top 5
+
+            //Times of Day preference ranks (1-3)
+
+            //Make if statement to check if summer was selected to show Summer Term
+
+            // Fall and Spring Days of Week preference Rank (1-3)
+
+
 
             //Insert Statement will go here
             System.out.println("You selected " + term + " semester with " + numberOfCourses +" courses.\n");
