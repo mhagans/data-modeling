@@ -129,7 +129,16 @@ public class StudentMenu {
     
     //A method that displays student info
     public void displayStudentInfo(String s){
-    	
+    	//open a db connection
+    	openDBcon();
+    	Statement stmt = null;
+    	String query = "SELECT * FROM Student_Form where id = " + s;
+    	//get all of the student info, print to screen
+    	stmt = conn.createStatement();	
+		 ResultSet rs = stmt.executeQuery(query);   		 
+		 while (rs.next()) {		
+			 System.out.println("Student ID: " + rs.getString("id") + "\n");	//Find and print the student's ID
+		 }
     }
     //A method that creates student
     public void createStudent(){
