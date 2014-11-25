@@ -1,3 +1,5 @@
+package DM;
+
 import java.util.ArrayList;
 
 //Students have IDs, names, degrees, semester + year, availible courses, preffered days?
