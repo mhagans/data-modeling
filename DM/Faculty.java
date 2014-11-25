@@ -160,13 +160,13 @@ public class Faculty {
                 Connection conn = ConnectDB.getConn();
 
 
-                String query = "SELECT course_number, name from COURSE WHERE term = ? AND iseven = ? ORDER BY course_number";
+                String query = "SELECT course_number, name from COURSE WHERE term = 'fall' AND iseven = 0 ORDER BY course_number";
                 PreparedStatement stmt = null;
                 ResultSet rs = null;
                 try {
                     stmt = conn.prepareStatement(query);
-                    stmt.setString(1, term); // set the term
-                    stmt.setInt(2, isEven); // set if year is even
+                   // stmt.setString(1, term); // set the term
+                    //stmt.setInt(2, isEven); // set if year is even
 
                     rs = stmt.executeQuery();
                     courseList = new ArrayList<String>();
@@ -182,8 +182,10 @@ public class Faculty {
                 System.out.printf("Select a course from the list and rank it from 1-%d.\n", numberOfCourses);
                 for (int j = 0; j < courseList.size(); j++){
 
-                    System.out.printf("%d) %s", j + 1, courseList.get(j));
+                    System.out.printf("%d) %s\n", j, courseList.get(j));
+
                 }
+                System.out.println(System.in);
 
                 System.out.println("Enter the course number and its");
 
