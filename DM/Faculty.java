@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Scanner;
 
 /**
  * Created by Marcus on 11/17/2014.
@@ -26,6 +27,7 @@ public class Faculty {
         int nextYear = year+1;
         int isEven = 0;
         String term = null;
+        String term2= null;
         String courseRelease = null;
         String sabbatical = null;
         String profDevelopment;
@@ -53,7 +55,8 @@ public class Faculty {
 
             switch (selection) {
                 case 1:
-                    term = "Fall";
+                    term = "fall";
+                    term2 = "Fall";
                     if (year % 2 == 0) {
                         isEven = 0;
                     }else {
@@ -61,7 +64,8 @@ public class Faculty {
                     }
                     break;
                 case 2:
-                    term = "Spring";
+                    term = "spring";
+                    term2 ="Spring";
                     if (nextYear % 2 == 0) {
                         isEven = 0;
                     }else {
@@ -69,7 +73,8 @@ public class Faculty {
                     }
                     break;
                 case 3:
-                    term = "Summer";
+                    term = "summer";
+                    term2 = "Summer";
                     if (nextYear % 2 == 0) {
                         isEven = 0;
                     }else {
@@ -86,7 +91,7 @@ public class Faculty {
             }
 
             // Select number of courses to teach
-            System.out.println("Enter the number of courses to teach for " + term + "semester.\n");
+            System.out.println("Enter the number of courses to teach for " + term2 + " semester.\n");
             br = new BufferedReader(new InputStreamReader(System.in));
 
             try {
@@ -160,13 +165,13 @@ public class Faculty {
                 Connection conn = ConnectDB.getConn();
 
 
-                String query = "SELECT course_number, name from COURSE WHERE term = 'fall' AND iseven = 0 ORDER BY course_number";
+                String query = "SELECT course_number, name from COURSE WHERE term = '" + term + "' AND iseven = " + isEven + " ORDER BY course_number";
                 PreparedStatement stmt = null;
                 ResultSet rs = null;
                 try {
                     stmt = conn.prepareStatement(query);
-                   // stmt.setString(1, term); // set the term
-                    //stmt.setInt(2, isEven); // set if year is even
+                    //stmt.setString(1, term); // set the term
+                   // stmt.setInt(2, isEven); // set if year is even
 
                     rs = stmt.executeQuery();
                     courseList = new ArrayList<String>();
@@ -182,10 +187,15 @@ public class Faculty {
                 System.out.printf("Select a course from the list and rank it from 1-%d.\n", numberOfCourses);
                 for (int j = 0; j < courseList.size(); j++){
 
-                    System.out.printf("%d) %s\n", j, courseList.get(j));
+                   if ((j > 0) && (j % 4 == 0)){
+                       System.out.printf("\n%d) %s", j, courseList.get(j));
+                   }else{
+                       System.out.printf("%d) %s", j, courseList.get(j));
+                   }
 
                 }
-                System.out.println(System.in);
+                Scanner r = new Scanner(System.in);
+                String c = r.nextLine();
 
                 System.out.println("Enter the course number and its");
 
