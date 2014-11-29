@@ -56,23 +56,23 @@ public class LoginServices
      * @param accessLevel Access level requested.
      * @return Returns username if successful, otherwise null.
      */
-    private static boolean login(AccessLevel accessLevel)
+    private static String login(AccessLevel accessLevel)
     {
         String username = getUsername(accessLevel);
         if(username == null)
         {
             System.out.println("Login failed.");
-            return false;
+            return null;
         }
         if(getPassword(username))
         {
             System.out.println("Login succeeded.");
-            return true;
+            return username;
         }
         else
         {
             System.out.println("Login failed.");
-            return false;
+            return null;
         }
     }
 
