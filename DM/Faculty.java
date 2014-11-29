@@ -32,8 +32,10 @@ public class Faculty {
         String sabbatical = null;
         String profDevelopment;
         String courseNumber = null;
+        boolean isSummer = false;
         Course listing;
         int[] priority = new int[3];
+        String[] time_of_day = new String[3];
         int ranking = 0;
         BufferedReader br;
         ArrayList<Course> courseList = null;
@@ -80,6 +82,7 @@ public class Faculty {
                         isEven = 0;
                     }
                     year = nextYear;
+                    isSummer = true;
                     break;
                 case 4:
                     System.out.println("Exiting Preference Form");
@@ -89,143 +92,284 @@ public class Faculty {
                     term = "Invalid Selection";
                     break;
             }
-
-            //Course Release
-            System.out.println("Enter Yes or No if Course Release is Expected.\n");
-            br = new BufferedReader(new InputStreamReader(System.in));
-
-            try {
-                courseRelease = br.readLine();
-            } catch (IOException e) {
-                System.out.println("IO error trying to read selection: " + e);
-            }
-
-            // Sabbatical
-            System.out.println("Enter Yes or No if Sabbatical is Expected\n");
-            br = new BufferedReader(new InputStreamReader(System.in));
-
-            try {
-                sabbatical = br.readLine();
-            } catch (IOException e) {
-                System.out.println("IO error trying to read selection: " + e);
-            }
-
-            //Professional Development Leave
-            System.out.println("Enter Yes or No if Professional Development is Expected\n");
-            br = new BufferedReader(new InputStreamReader(System.in));
-
-            try {
-                profDevelopment = br.readLine();
-            } catch (IOException e) {
-                System.out.println("IO error trying to read selection: " + e);
-            }
-
-            // Scheduling Factors Importance Rank Order(1-3)
-            System.out.println("Rank Your Scheduling Factors Importance by rank order 1-3 with 1 being the highest");
-            int count = 0;
-            String prefTitle = null;
-            while(count != 3){
-                switch (count){
-                    case 0:
-                        prefTitle = "Course Preference";
-                        break;
-                    case 1:
-                        prefTitle = "Days of the Week";
-                        break;
-                    case 2:
-                        prefTitle = "Times of the Day";
-                }
-                System.out.println(prefTitle);
-                br = new BufferedReader(new InputStreamReader(System.in));
-
-                try {
-                    priority[count] = Integer.parseInt(br.readLine());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                count++;
-
-            }
-
-            // Select number of courses to teach
-            System.out.println("Enter the number of courses to teach for " + term2 + " semester.\n");
-            br = new BufferedReader(new InputStreamReader(System.in));
-
-            try {
-                numberOfCourses = Integer.parseInt(br.readLine());
-
-            } catch (IOException e) {
-                System.out.println("IO error trying to read selection: " + e);
-                System.exit(1);
-            }
-            // Loop to iterate through the courses
-            for(int i = 0; i < numberOfCourses; i++){
-
-                // Course Rankings choose top 5
-
-                // query to populate Course list
-                Connection conn = ConnectDB.getConn();
-                String query = "";
-                if (term.equals("fall") && isEven == 1){
-                    query = "SELECT course_number, name from COURSE WHERE term = '" + term + "' ORDER BY course_number";
-                }else{
-                    query = "SELECT course_number, name from COURSE WHERE term = '" + term + "' AND iseven = " + isEven + " ORDER BY course_number";
-                }
-
-                PreparedStatement stmt = null;
-                ResultSet rs = null;
-                try {
-                    stmt = conn.prepareStatement(query);
-                    rs = stmt.executeQuery();
-                    courseList = new ArrayList<Course>();
-
-                    while(rs.next()){
-                        listing = new Course(rs.getString("course_number"), rs.getString("name"));
-
-                        courseList.add(listing);
+            //See if Summer was selected to disable certain menus
+            if(isSummer){
+                //Start of Summer menu selection
+                // Scheduling Factors Importance Rank Order(1-3)
+                System.out.println("Rank Your Scheduling Factors Importance by rank order 1-3 with 1 being the highest.");
+                int count = 0;
+                String prefTitle = null;
+                while(count != 3){
+                    switch (count){
+                        case 0:
+                            prefTitle = "Course Preference";
+                            break;
+                        case 1:
+                            prefTitle = "Days of the Week";
+                            break;
+                        case 2:
+                            prefTitle = "Times of the Day";
                     }
-                    rs.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                    System.out.println(prefTitle);
+                    br = new BufferedReader(new InputStreamReader(System.in));
+
+                    try {
+                        priority[count] = Integer.parseInt(br.readLine());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    count++;
+
                 }
 
-                int index = 1;
-                System.out.printf("Select a course from the list.\n");
-                for (int j = 0; j < courseList.size(); j++){
-
-                    System.out.printf("%d) %s\n", j, courseList.get(j).toString());
-                }
+                // Select number of courses to teach
+                System.out.println("Enter the number of courses to teach for " + term2 + " semester.\n");
                 br = new BufferedReader(new InputStreamReader(System.in));
 
                 try {
-
-                    courseNumber = courseList.get(Integer.parseInt(br.readLine())).course_number;
+                    numberOfCourses = Integer.parseInt(br.readLine());
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println("IO error trying to read selection: " + e);
+                    System.exit(1);
                 }
-                System.out.printf("Rank the course from 1-%d\n", numberOfCourses);
+                // Loop to iterate through the courses
+                for(int i = 0; i < numberOfCourses; i++){
+
+                    // Course Rankings choose top 5
+
+                    // query to populate Course list
+                    Connection conn = ConnectDB.getConn();
+                    String query = "";
+                    if (term.equals("fall") && isEven == 1){
+                        query = "SELECT course_number, name from COURSE WHERE term = '" + term + "' ORDER BY course_number";
+                    }else{
+                        query = "SELECT course_number, name from COURSE WHERE term = '" + term + "' AND iseven = " + isEven + " ORDER BY course_number";
+                    }
+
+                    PreparedStatement stmt = null;
+                    ResultSet rs = null;
+                    try {
+                        stmt = conn.prepareStatement(query);
+                        rs = stmt.executeQuery();
+                        courseList = new ArrayList<Course>();
+
+                        while(rs.next()){
+                            listing = new Course(rs.getString("course_number"), rs.getString("name"));
+
+                            courseList.add(listing);
+                        }
+                        rs.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    int index = 1;
+                    System.out.printf("Select a course from the list.\n");
+                    for (int j = 0; j < courseList.size(); j++){
+
+                        System.out.printf("%d) %s\n", j, courseList.get(j).toString());
+                    }
+                    br = new BufferedReader(new InputStreamReader(System.in));
+
+                    try {
+
+                        courseNumber = courseList.get(Integer.parseInt(br.readLine())).course_number;
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.printf("Rank the course from 1-%d\n", numberOfCourses);
+                    br = new BufferedReader(new InputStreamReader(System.in));
+
+                    try {
+
+                        ranking = Integer.parseInt(br.readLine());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //Insert into the course _ form ID, Year, Term, Course_number, ranking
+                    query = "INSERT into form_course VALUES (" + i + ", '" + year + "', '" + term + "', '" + courseNumber + "', " + ranking + ")";
+                    try {
+                        stmt = conn.prepareStatement(query);
+                        stmt.executeUpdate();
+                        stmt.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+
+            }else{
+                //Course Release
+                System.out.println("Enter Yes or No if Course Release is Expected.\n");
                 br = new BufferedReader(new InputStreamReader(System.in));
 
                 try {
+                    courseRelease = br.readLine();
+                } catch (IOException e) {
+                    System.out.println("IO error trying to read selection: " + e);
+                }
 
-                    ranking = Integer.parseInt(br.readLine());
+                // Sabbatical
+                System.out.println("Enter Yes or No if Sabbatical is Expected\n");
+                br = new BufferedReader(new InputStreamReader(System.in));
+
+                try {
+                    sabbatical = br.readLine();
+                } catch (IOException e) {
+                    System.out.println("IO error trying to read selection: " + e);
+                }
+
+                //Professional Development Leave
+                System.out.println("Enter Yes or No if Professional Development is Expected\n");
+                br = new BufferedReader(new InputStreamReader(System.in));
+
+                try {
+                    profDevelopment = br.readLine();
+                } catch (IOException e) {
+                    System.out.println("IO error trying to read selection: " + e);
+                }
+
+                // Scheduling Factors Importance Rank Order(1-3)
+                System.out.println("Rank Your Scheduling Factors Importance by rank order 1-3 with 1 being the highest");
+                int count = 0;
+                String prefTitle = null;
+                while(count != 3){
+                    switch (count){
+                        case 0:
+                            prefTitle = "Course Preference";
+                            break;
+                        case 1:
+                            prefTitle = "Days of the Week";
+                            break;
+                        case 2:
+                            prefTitle = "Times of the Day";
+                    }
+                    System.out.println(prefTitle);
+                    br = new BufferedReader(new InputStreamReader(System.in));
+
+                    try {
+                        priority[count] = Integer.parseInt(br.readLine());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    count++;
+
+                }
+
+                // Select number of courses to teach
+                System.out.println("Enter the number of courses to teach for " + term2 + " semester.\n");
+                br = new BufferedReader(new InputStreamReader(System.in));
+
+                try {
+                    numberOfCourses = Integer.parseInt(br.readLine());
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println("IO error trying to read selection: " + e);
+                    System.exit(1);
                 }
-                //Insert into the course _ form ID, Year, Term, Course_number, ranking
-                query = "INSERT into form_course VALUES (" + i + ", '" + year + "', '" + term + "', '" + courseNumber + "', " + ranking + ")";
-                try {
-                    stmt = conn.prepareStatement(query);
-                    stmt.executeUpdate();
-                    stmt.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                // Loop to iterate through the courses
+                for(int i = 0; i < numberOfCourses; i++){
+
+                    // Course Rankings choose top 5
+
+                    // query to populate Course list
+                    Connection conn = ConnectDB.getConn();
+                    String query = "";
+                    if (term.equals("fall") && isEven == 1){
+                        query = "SELECT course_number, name from COURSE WHERE term = '" + term + "' ORDER BY course_number";
+                    }else{
+                        query = "SELECT course_number, name from COURSE WHERE term = '" + term + "' AND iseven = " + isEven + " ORDER BY course_number";
+                    }
+
+                    PreparedStatement stmt = null;
+                    ResultSet rs = null;
+                    try {
+                        stmt = conn.prepareStatement(query);
+                        rs = stmt.executeQuery();
+                        courseList = new ArrayList<Course>();
+
+                        while(rs.next()){
+                            listing = new Course(rs.getString("course_number"), rs.getString("name"));
+
+                            courseList.add(listing);
+                        }
+                        rs.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    int index = 1;
+                    System.out.printf("Select a course from the list.\n");
+                    for (int j = 0; j < courseList.size(); j++){
+
+                        System.out.printf("%d) %s\n", j, courseList.get(j).toString());
+                    }
+                    br = new BufferedReader(new InputStreamReader(System.in));
+
+                    try {
+
+                        courseNumber = courseList.get(Integer.parseInt(br.readLine())).course_number;
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.printf("Rank the course from 1-%d\n", numberOfCourses);
+                    br = new BufferedReader(new InputStreamReader(System.in));
+
+                    try {
+
+                        ranking = Integer.parseInt(br.readLine());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //Insert into the course _ form ID, Year, Term, Course_number, ranking
+                    query = "INSERT into form_course VALUES (" + i + ", '" + year + "', '" + term + "', '" + courseNumber + "', " + ranking + ")";
+                    try {
+                        stmt = conn.prepareStatement(query);
+                        stmt.executeUpdate();
+                        stmt.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
                 }
 
+                //Time of Day Preference
+                System.out.println("Rank Your Time of Day Preference by rank order 1-3 with 1 being the highest.");
+                count = 0;
+                prefTitle = null;
+                while(count != 3){
+                    switch (count){
+                        case 0:
+                            prefTitle = "Morning (9 am - Noon)";
+                            break;
+                        case 1:
+                            prefTitle = "Afternoon (Noon - 4:15 pm";
+                            break;
+                        case 2:
+                            prefTitle = "Evening (4:30 pm - 9:10pm";
+                    }
+                    System.out.println(prefTitle);
+                    br = new BufferedReader(new InputStreamReader(System.in));
+
+                    try {
+                        int choice = Integer.parseInt(br.readLine());
+                        time_of_day[choice] = prefTitle;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    count++;
+
+                }
             }
-            
+
+
+
             System.out.println("Enter the course number and its");
 
             //Times of Day preference ranks (1-3)
