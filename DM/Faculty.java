@@ -225,8 +225,7 @@ public class Faculty {
                 }
 
             }
-
-
+            
             System.out.println("Enter the course number and its");
 
             //Times of Day preference ranks (1-3)
