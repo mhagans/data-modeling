@@ -31,10 +31,10 @@ public class Faculty {
         String courseRelease = null;
         String sabbatical = null;
         String profDevelopment;
-        String listing = "";
+        Course listing;
         int[] priority = new int[3];
         BufferedReader br;
-        ArrayList<String> courseList = null;
+        ArrayList<Course> courseList = null;
 
         while(true){
 
@@ -58,27 +58,23 @@ public class Faculty {
                     term = "fall";
                     term2 = "Fall";
                     if (year % 2 == 0) {
-                        isEven = 0;
-                    }else {
                         isEven = 1;
+                    }else {
+                        isEven = 0;
                     }
                     break;
                 case 2:
                     term = "spring";
                     term2 ="Spring";
-                    if (nextYear % 2 == 0) {
-                        isEven = 0;
-                    }else {
-                        isEven = 1;
-                    }
+                    isEven = 0;
                     break;
                 case 3:
                     term = "summer";
                     term2 = "Summer";
                     if (nextYear % 2 == 0) {
-                        isEven = 0;
-                    }else {
                         isEven = 1;
+                    }else {
+                        isEven = 0;
                     }
                     break;
                 case 4:
@@ -163,9 +159,13 @@ public class Faculty {
 
                 // query to populate Course list
                 Connection conn = ConnectDB.getConn();
+                String query = "";
+                if (term.equals("fall") && isEven == 1){
+                    query = "SELECT course_number, name from COURSE WHERE term = '" + term + "' ORDER BY course_number";
+                }else{
+                    query = "SELECT course_number, name from COURSE WHERE term = '" + term + "' AND iseven = " + isEven + " ORDER BY course_number";
+                }
 
-
-                String query = "SELECT course_number, name from COURSE WHERE term = '" + term + "' AND iseven = " + isEven + " ORDER BY course_number";
                 PreparedStatement stmt = null;
                 ResultSet rs = null;
                 try {
@@ -174,10 +174,11 @@ public class Faculty {
                    // stmt.setInt(2, isEven); // set if year is even
 
                     rs = stmt.executeQuery();
-                    courseList = new ArrayList<String>();
+                    courseList = new ArrayList<Course>();
 
                     while(rs.next()){
-                        listing = rs.getString("course_number") + " " + rs.getString("name");
+                        listing = new Course(rs.getString("course_number"), rs.getString("name"));
+
                         courseList.add(listing);
                     }
                 } catch (SQLException e) {
@@ -187,15 +188,14 @@ public class Faculty {
                 System.out.printf("Select a course from the list and rank it from 1-%d.\n", numberOfCourses);
                 for (int j = 0; j < courseList.size(); j++){
 
-                   if ((j > 0) && (j % 4 == 0)){
-                       System.out.printf("\n%d) %s", j, courseList.get(j));
-                   }else{
-                       System.out.printf("%d) %s", j, courseList.get(j));
-                   }
+                    System.out.printf("%d) %s\n", j, courseList.get(j).toString());
+
 
                 }
                 Scanner r = new Scanner(System.in);
                 String c = r.nextLine();
+
+                //Insert into the course _ form ID, Year, Term, Course_number, ranking
 
                 System.out.println("Enter the course number and its");
 
