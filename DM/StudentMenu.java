@@ -15,7 +15,7 @@ public class StudentMenu {
     private String password="team1bcchlrt";//password goes here
     private String url="jdbc:oracle:thin:@olympia.unfcsd.unf.edu:1521:dworcl";
     private Connection conn;
-    private LinkIterator studentlinkedlist;
+    private Hashtable<String, student> studenttable;
     
     private void openDBcon(){	 
     	try{
@@ -50,32 +50,30 @@ public class StudentMenu {
     //Constructor builds and populates linked list of student objects
     StudentMenu(){
     	Statement stmt = null;
-    	String query = "SELECT id FROM id WHERE Permission = 0";
+    	String query = "SELECT * FROM id WHERE Permission = 0";
     	
     	LinkIterator iterator = new LinkIterator();
     	
     	try{
     		openDBcon();						//Open the DB connection
     		stmt = conn.createStatement();	
-    		 ResultSet rs = stmt.executeQuery(query);   		 
+    		 ResultSet rs = stmt.executeQuery(query);
+    		 
+    		studenttable = new Hashtable<String, Student>();
     		 while (rs.next()) {
-    			 Student student = new Student();
-    			 student.setID(rs.getString("id"));
-    			 Link link = new Link();
-    			 link.setStudent(student);
+    			 Student student = new Student();					//make a student
+    			 studentid = rs.getString("id");					//get attributes and put them in student
+    			 student.setID(studentid);
+    			 student.setName(rs.getString("name"));    			 
+    			 student.setDegree(rs.getString("degree"));    			 
+    			 studenttable(studentid, student);					//put student object in hashtable		 
     			 
-    			 if(iterator.noFirstLink()){
-    				 iterator.setFirstLink(link);
-    			 }
-    			 
-    			 else{
-    				 iterator.getcurrentlink().setnextlink(link);
-    				 iterator.nextlink();
-    			 }    			 
+    			
     		 }
     		 closeDBcon();					//close DB connection
-    		 iterator.resetIterator();      //puts iterator back on first link
-    		 studentlinkedlist = iterator;  //if completed without issues puts the iterator to the class iterator for wider scope
+    		 
+    		 displayStudentMenu();			//display stuff
+    		
     	}
     	
     	catch (SQLException e ) {
@@ -91,165 +89,29 @@ public class StudentMenu {
         }
     }
     
-    public void selectStudent(){
-    	System.out.println("Please select a student ID:\n");
-    	Scanner sc = new Scanner(System.in);
+    public void displayStudentMenu(){
+    	System.out.println("Hello, please select a student ID: \n");
+    	Scanner reader = new Scanner(System.in);
     	
-    	String lookup = sc.next();
+    	Student stud = studenttable.get(reader.next());			//pull student from table
     	
-    	//look through students to see if an ID matches
-    	while((studentlinkedlist.getcurrentlink().getStudent().getID() != lookup) && studentlinkedlist.getcurrentlink() != null){
-    		studentlinkedlist.nextlink();
+    	if(stud != null){										//if it was found display attributes
+    		System.out.println("Student ID: " + stud.getID() + "\n");													
+    		System.out.println("Student Name: " + stud.getName() + "\n");
+    		System.out.println("Student Degree: " + stud.getDegree() + "\n");
+    		System.out.println("Student Year: " + stud.getYear() + "\n");
+    		System.out.println("Student Preffered Days: " stud.getDays() + "\n");
+    		System.out.println("Student Preffered Times: " + stud.getTimes() + "\n");
+    		//a thing for classes
     	}
-    	//if the list is exhausted and there was no match, reset the iterator, ask create new student
-    	if(studentlinkedlist.getcurrentlink() == null){
-    		studentlinkedlist.resetIterator();
-    		system.out.println("A match wasn't found, create new student?(y/n)\n");
-    		String selection = sc.next();
-    		if(selection.toLowerCase() == "yes" || "y"){
-    			//go to create student method
-    			
-    		}
-    		else if(selection.toLowerCase() == "no" || "n"){
-    			//break out?
-    			break;
-    		}
-    		else{
-    			System.out.println("not a valid input\n");
-    		}
-    	}
-    	//if a match is found, reset iterator, go to students info method
-    	else if(student.linkedlist.getcurrentlink().getStudent().getID() == lookup){
-    		studentlinkedlist.resetIterator();
-    		system.out.println("Match found\n")
-    		//go to a method that displays students info
-    	}
+    	
     	else{
-    		System.out.println("A student wasnt found and end of list didnt happen, welp\n");
+    		System.out.println("student not found, create new student? \n");		//go to create student method if not found
+    		
     	}
-    }
-    
-    //A method that displays student info
-    public void displayStudentInfo(String s){
-    	//open a db connection
-    	openDBcon();
-    	Statement stmt = null;
-    	String query = "SELECT * FROM Student_Form where id = " + s;
-    	//get all of the student info, print to screen
-    	stmt = conn.createStatement();	
-		 ResultSet rs = stmt.executeQuery(query);   		 
-		 while (rs.next()) {		
-			 System.out.println("Student ID: " + rs.getString("id") + "\n");	//Find and print the student's ID
-		 }
-    }
-    //A method that creates student
-    public void createStudent(){
-    	//get all the info to create a student first
-    	Scanner sc = new Scanner(system.in);
-    	System.out.println("Student name?\n");
-    	String sname = sc.next();    	
-    	//make sure it fits
-    	while(sname.length() > 110){
-    		System.out.printlin("Name is too long, please adjust\n");
-    		sname = sc.next();
-    	}
-    	System.out.println("Student degree?\n")
-    	String sdegree = sc.next();
-    	System.out.println("Student year?\n");
-    	String syear = sc.next();
     	
-    	//prefered times? need clarification on this
-    	//open the db connection
-    	openDBcon();
-    	Statement stmt = null;
-    	String query = "";
     }
-    
-   /* Disp student menu mothballed, students selected by direct id
-    * public void displayStudentMenu(){
-    	
-    	int n = 1;
-    	System.out.println("Hello, please select a student, or create a new one:\n");		//friendly message
-    	while(studentlinkedlist.getcurrentlink() != null){				//while there are more links    		
-    		System.out.println(n + ". " + studentlinkedlist.getcurrentlink().getStudent().getName() + "\n");	//get the students name
-    		studentlinkedlist.nextlink();	//increment the linkedlist
-    		n++; //increment the index
-    	}
-    	System.out.println("Create new student (type 'new')\n");		//create new dialog
-    }   
-    */ 
-}
-
-class Link{
-	  
-	  private Link nextlink;
-	  private Link prevlink;
-	  private Student student;
-	  
-	  
-
-	  public Student getStudent(){
-	    return(student);
-	  }
-
-	  public void setStudent(Student x){
-	    student = x;
-	  }
-
-	  public Link getnextlink(){
-	    return(nextlink);
-	  }
-
-	  public void setnextlink(Link x){
-	    nextlink = x;
-	  }
-
-	  public Link getprevlink(){
-	    return(prevlink);
-	  }
-
-	  public void setprevlink(Link x){
-	    prevlink = x;
-	  }
-}
-
-class LinkIterator{
-	  private Link currentlink;
-	  private Link firstlink;
-	  
-	  public boolean noFirstLink(){
-		  if(firstlink == null){
-			  return true;
-		  }
-		  else{
-			  return false;
-		  } 		  
-	  }
-	  
-	  public Link getFirstLink(){
-		  return firstlink;
-	  }
-	  
-	  public void setFirstLink(Link x){
-		  firstlink = x;
-	  }
-	  
-	  public void setcurrentlink(Link x){
-	    currentlink = x;
-	  }
-	  
-	  public Link getcurrentlink(){
-	    return(currentlink);
-	  }
-
-	  public void nextlink(){
-	   if(currentlink.getnextlink() != null)
-	     currentlink = currentlink.getnextlink();
-	   else
-	     System.out.print("End of list");   
-	}
-	  
-	  public void resetIterator(){
-		  currentlink = firstlink;
-	  }
+   private createStudent(){
+	   //put a student in the db
+   }
 }

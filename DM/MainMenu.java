@@ -16,6 +16,7 @@ public class MainMenu {
             uin = r.nextInt();
             switch (uin) {
                 case 1:
+                	new StudentMenu();
                     break;
                 case 2:
                     new Faculty();

@@ -16,7 +16,11 @@ public class LoginServices
     private static final String salt = "&y81*d5jp8dn4n0@-$u-_)w30+j9*lksh)r$c&2v(bu#%$8!2t";
     public enum AccessLevel
     {
+<<<<<<< HEAD
         FACULTY, ADMIN
+=======
+        //FACULTY = 1, ADMIN
+>>>>>>> dd72e5daea7031383ff441ac18817a2ca5d9d640
     }
 
     /**
@@ -28,6 +32,7 @@ public class LoginServices
      * @param password Password for new user.
      * @param accessLevel Access level for new user.
      */
+<<<<<<< HEAD
     public static void createUser(String username, String name, String degree, String password, AccessLevel accessLevel)
     {
         //TODO: Major refactoring
@@ -39,6 +44,20 @@ public class LoginServices
             Connection connection = ConnectDB.getConn();
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
+=======
+    public static void createUser(String username, String name, String degree, String password, AccessLevel accessLevel) throws SQLException {
+       // String query = String.format("INSERT INTO id (id, name, degree, password, Permission) values %s %s %s %s %i;",
+         //   username, name, degree, password, accessLevel.ordinal);
+
+        Connection connection = ConnectDB.getConn();
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //   ResultSet resultSet = statement.executeQuery(query);
+>>>>>>> dd72e5daea7031383ff441ac18817a2ca5d9d640
 
             System.out.println("User was created successfully");
 

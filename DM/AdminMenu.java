@@ -2,7 +2,7 @@
 package DM;
 
 import java.util.Scanner;
-import LoginServices.AccessLevel;
+import DM.LoginServices.AccessLevel;
 
 public class AdminMenu
 {
@@ -22,28 +22,28 @@ public class AdminMenu
     {
         in = new Scanner(System.in);
 
-        String input;
+        int input = 0;
 
-        display: while (!Action.EXIT.ordinal().equals(input))
+        display: while (input != 4)
         {
             System.out.println("Admin Menu\n"
                     + "1) Create Faculty Accoun\n"
                     + "2) Create Admin Account\n"
                     + "3) View Reports\n"
                     + "4) Back");
-            input = in.next();
-            switch (uin) 
+            input = in.nextInt();
+            switch (input)
             {
-                case "1":
-                    createUser(AccessLevel.FACULTY)
+                case 1:
+                  //  createUser(AccessLevel.FACULTY);
                     break;
-                case "2":
-                    createUser(AccessLevel.ADMIN);
+                case 2:
+                    //createUser(AccessLevel.ADMIN);
                     break;
-                case "3":
+                case 3:
                     new Report();
                     break;
-                case "4":
+                case 4:
                     break display;
                 default:
                     System.out.println("Bad input: please enter a number between 1-4");
@@ -53,7 +53,7 @@ public class AdminMenu
 
     private void createUser(AccessLevel accessLevel)
     {
-        System.out.println("Creating new " + accessLevel.name().toUpperCase() " level user");
+        System.out.println("Creating new " + accessLevel.name().toUpperCase() + " level user");
         System.out.println("---------------------------------------------");
         
         System.out.print("Enter the users username: ");
@@ -72,6 +72,6 @@ public class AdminMenu
         
         String areaOfExpertise = in.next();
 
-        LoginServices.createUser(username, password, name, areaOfExpertise accessLevel);
+        //LoginServices.createUser(username, password, name, areaOfExpertise, accessLevel);
     }
 }

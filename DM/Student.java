@@ -8,9 +8,12 @@ public class Student {
 	private int ID;
 	private String name;
 	private String degree;
-	private String semesteryear;
+	private String year;
+	private String times;
+	private String days;
 	private ArrayList courses;
 	
+		
 	public int getID(){
 		return(ID);
 	}
@@ -35,11 +38,27 @@ public class Student {
 		degree = x;
 	}
 	
-	public String getSemesterYear(){
+	public String getYear(){
 		return(semesteryear);
 	}
 	
-	public void setSemesterYear(String x){
-		semesteryear = x;
+	public void setYear(String x){
+		year = x;
 	}
+	
+	public void setTimes(String x){
+		times = x;
+	}
+	public String getTimes(){
+		return(times);
+	}
+	
+	public void setDays(String x){
+		days = x;
+	}
+	
+	public String getDays(){
+		return(days);
+	}
+	
 }

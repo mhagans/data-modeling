@@ -10,8 +10,8 @@ public class ConnectDB{
     
     
     public static void main(String[] args)throws SQLException{
-       // Connection conn=getConn();
-        //conn.close();
+        Connection conn=getConn();
+        conn.close();
         while(1==1){
         new MainMenu();
         }
@@ -28,6 +28,7 @@ public class ConnectDB{
         try{
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             conn=DriverManager.getConnection(url, userName, password);
+            System.out.println("Conneted");
             return conn;
         }
         catch (Exception ie) {
