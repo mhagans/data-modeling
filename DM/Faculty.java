@@ -34,6 +34,7 @@ public class Faculty {
         String courseNumber = null;
         boolean isSummer = false;
         Course listing;
+        int choice = 0;
         int[] priority = new int[3];
         String[] time_of_day = new String[3];
         int ranking = 0;
@@ -114,6 +115,7 @@ public class Faculty {
                     br = new BufferedReader(new InputStreamReader(System.in));
 
                     try {
+                        choice = Integer.parseInt(br.readLine());
                         priority[count] = Integer.parseInt(br.readLine());
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -200,7 +202,6 @@ public class Faculty {
                     }
 
                 }
-
 
             }else{
                 //Course Release
@@ -343,29 +344,73 @@ public class Faculty {
                 System.out.println("Rank Your Time of Day Preference by rank order 1-3 with 1 being the highest.");
                 count = 0;
                 prefTitle = null;
+
                 while(count != 3){
+                    String timeOf = null;
                     switch (count){
                         case 0:
                             prefTitle = "Morning (9 am - Noon)";
+                            timeOf = "Morning";
                             break;
                         case 1:
                             prefTitle = "Afternoon (Noon - 4:15 pm";
+                            timeOf = "Afternoon";
                             break;
                         case 2:
                             prefTitle = "Evening (4:30 pm - 9:10pm";
+                            timeOf = "Evening";
                     }
                     System.out.println(prefTitle);
                     br = new BufferedReader(new InputStreamReader(System.in));
+                    choice = 0;
 
                     try {
-                        int choice = Integer.parseInt(br.readLine());
-                        time_of_day[choice] = prefTitle;
+                        choice = Integer.parseInt(br.readLine());
+                        time_of_day[choice] = timeOf;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     count++;
 
                 }
+
+                //Fall and Spring Days of Week Preference Rank Order
+                //Time of Day Preference
+                System.out.println("Rank Your Days of the Week Preference by rank order 1-3 with 1 being the highest.");
+                count = 0;
+                prefTitle = null;
+
+                while(count != 3){
+                    String week = null;
+                    switch (count){
+                        case 0:
+                            prefTitle = "MWF(3 credits, 7 am - 3 pm)";
+                            week = "MWF";
+                            break;
+                        case 1:
+                            prefTitle = "Monday and Wednesdays";
+                            week = "MW";
+                            break;
+                        case 2:
+                            prefTitle = "Tuesdays and Thursday";
+                            week = "TR";
+                    }
+                    System.out.println(prefTitle);
+                    br = new BufferedReader(new InputStreamReader(System.in));
+                    choice = 0;
+
+                    try {
+                        choice = Integer.parseInt(br.readLine());
+                        time_of_day[choice] = week;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    count++;
+
+                }
+
+                // Insert into the faculty_form table
+
             }
 
 
