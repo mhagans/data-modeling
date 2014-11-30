@@ -1,8 +1,6 @@
 <component name="libraryTable">
   <library name="jre7">
-    <CLASSES>
-      <root url="file://C:/Program Files/Java/jre7" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
     <SOURCES />
   </library>
