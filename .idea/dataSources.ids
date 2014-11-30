@@ -1651,11 +1651,66 @@
       <column name="DATE_VALUE" sqlType="DATE" precision="7" scale="0" nullable="true" jdbcType="93"/>
       <column name="LONG_VALUE" sqlType="LONG" precision="0" scale="0" nullable="true" jdbcType="-1"/>
     </table>
-    <table name="COURSE" schema="TEAMA1DM2F14" catalog="" type="TABLE"/>
-    <table name="FACULTY_FORM" schema="TEAMA1DM2F14" catalog="" type="TABLE"/>
-    <table name="FORM_COURSE" schema="TEAMA1DM2F14" catalog="" type="TABLE"/>
-    <table name="ID" schema="TEAMA1DM2F14" catalog="" type="TABLE"/>
-    <table name="STUDENT_FORM" schema="TEAMA1DM2F14" catalog="" type="TABLE"/>
+    <table name="COURSE" schema="TEAMA1DM2F14" catalog="" type="TABLE">
+      <column name="COURSE_NUMBER" sqlType="CHAR" precision="7" scale="0" nullable="false" jdbcType="1"/>
+      <column name="TERM" sqlType="CHAR" precision="14" scale="0" nullable="false" jdbcType="1"/>
+      <column name="ISEVEN" sqlType="NUMBER" precision="1" scale="0" nullable="false" jdbcType="3"/>
+      <column name="NAME" sqlType="CHAR" precision="35" scale="0" nullable="false" jdbcType="1"/>
+      <primary-key name="SYS_C0042378" columns="COURSE_NUMBER,TERM"/>
+      <exported-key name="SYS_C0042396" table="FORM_COURSE" schema="TEAMA1DM2F14" catalog="" columns="COURSE_NUMBER,TERM"/>
+    </table>
+    <table name="FACULTY_FORM" schema="TEAMA1DM2F14" catalog="" type="TABLE">
+      <column name="YEAR" sqlType="NUMBER" precision="4" scale="0" nullable="false" jdbcType="3"/>
+      <column name="TERM" sqlType="CHAR" precision="14" scale="0" nullable="false" jdbcType="1"/>
+      <column name="ID" sqlType="CHAR" precision="8" scale="0" nullable="false" jdbcType="1"/>
+      <column name="LOAD" sqlType="NUMBER" precision="2" scale="0" nullable="true" jdbcType="3"/>
+      <column name="COURSE_PREF" sqlType="NUMBER" precision="1" scale="0" nullable="true" jdbcType="3"/>
+      <column name="DAYS_PREF" sqlType="NUMBER" precision="1" scale="0" nullable="true" jdbcType="3"/>
+      <column name="TIME_PREF" sqlType="NUMBER" precision="1" scale="0" nullable="true" jdbcType="3"/>
+      <column name="DAY_1" sqlType="CHAR" precision="4" scale="0" nullable="false" jdbcType="1"/>
+      <column name="DAY_2" sqlType="CHAR" precision="4" scale="0" nullable="true" jdbcType="1"/>
+      <column name="DAY_3" sqlType="CHAR" precision="4" scale="0" nullable="true" jdbcType="1"/>
+      <column name="TIME_1" sqlType="CHAR" precision="9" scale="0" nullable="false" jdbcType="1"/>
+      <column name="TIME_2" sqlType="CHAR" precision="9" scale="0" nullable="true" jdbcType="1"/>
+      <column name="TIME_3" sqlType="CHAR" precision="9" scale="0" nullable="true" jdbcType="1"/>
+      <column name="RELEASE" sqlType="NUMBER" precision="1" scale="0" nullable="true" jdbcType="3"/>
+      <column name="SABBATICAL" sqlType="NUMBER" precision="1" scale="0" nullable="true" jdbcType="3"/>
+      <column name="LEAVE" sqlType="NUMBER" precision="1" scale="0" nullable="true" jdbcType="3"/>
+      <primary-key name="SYS_C0042389" columns="YEAR,TERM,ID"/>
+      <foreign-key name="SYS_C0042390" columns="ID" ref-table="ID" ref-schema="TEAMA1DM2F14" ref-catalog="" ref-columns="ID" update-rule="0" delete-rule="1" deferrability="2"/>
+      <exported-key name="SYS_C0042398" table="FORM_COURSE" schema="TEAMA1DM2F14" catalog="" columns="YEAR,TERM,ID"/>
+    </table>
+    <table name="FORM_COURSE" schema="TEAMA1DM2F14" catalog="" type="TABLE">
+      <column name="ID" sqlType="CHAR" precision="8" scale="0" nullable="false" jdbcType="1"/>
+      <column name="YEAR" sqlType="NUMBER" precision="4" scale="0" nullable="false" jdbcType="3"/>
+      <column name="TERM" sqlType="CHAR" precision="14" scale="0" nullable="false" jdbcType="1"/>
+      <column name="COURSE_NUMBER" sqlType="CHAR" precision="7" scale="0" nullable="false" jdbcType="1"/>
+      <column name="RANKING" sqlType="NUMBER" precision="1" scale="0" nullable="true" jdbcType="3"/>
+      <primary-key name="SYS_C0042395" columns="ID,YEAR,TERM,COURSE_NUMBER"/>
+      <foreign-key name="SYS_C0042396" columns="COURSE_NUMBER,TERM" ref-table="COURSE" ref-schema="TEAMA1DM2F14" ref-catalog="" ref-columns="COURSE_NUMBER,TERM" update-rule="0" delete-rule="1" deferrability="2"/>
+      <foreign-key name="SYS_C0042398" columns="YEAR,TERM,ID" ref-table="FACULTY_FORM" ref-schema="TEAMA1DM2F14" ref-catalog="" ref-columns="YEAR,TERM,ID" update-rule="0" delete-rule="1" deferrability="2"/>
+      <foreign-key name="SYS_C0042397" columns="YEAR,TERM,ID" ref-table="STUDENT_FORM" ref-schema="TEAMA1DM2F14" ref-catalog="" ref-columns="YEAR,TERM,ID" update-rule="0" delete-rule="1" deferrability="2"/>
+    </table>
+    <table name="ID" schema="TEAMA1DM2F14" catalog="" type="TABLE">
+      <column name="ID" sqlType="CHAR" precision="8" scale="0" nullable="false" jdbcType="1"/>
+      <column name="NAME" sqlType="CHAR" precision="110" scale="0" nullable="true" jdbcType="1"/>
+      <column name="DEGREE" sqlType="CHAR" precision="2" scale="0" nullable="true" jdbcType="1"/>
+      <column name="PASSWORD" sqlType="CHAR" precision="40" scale="0" nullable="true" jdbcType="1"/>
+      <column name="PERMISSION" sqlType="NUMBER" precision="1" scale="0" nullable="true" jdbcType="3"/>
+      <primary-key name="SYS_C0041402" columns="ID"/>
+      <exported-key name="SYS_C0042390" table="FACULTY_FORM" schema="TEAMA1DM2F14" catalog="" columns="ID"/>
+      <exported-key name="SYS_C0042383" table="STUDENT_FORM" schema="TEAMA1DM2F14" catalog="" columns="ID"/>
+    </table>
+    <table name="STUDENT_FORM" schema="TEAMA1DM2F14" catalog="" type="TABLE">
+      <column name="YEAR" sqlType="NUMBER" precision="4" scale="0" nullable="false" jdbcType="3"/>
+      <column name="TERM" sqlType="CHAR" precision="14" scale="0" nullable="false" jdbcType="1"/>
+      <column name="ID" sqlType="CHAR" precision="8" scale="0" nullable="false" jdbcType="1"/>
+      <column name="DAY" sqlType="CHAR" precision="4" scale="0" nullable="true" jdbcType="1"/>
+      <column name="TIME" sqlType="CHAR" precision="9" scale="0" nullable="true" jdbcType="1"/>
+      <primary-key name="SYS_C0042382" columns="YEAR,TERM,ID"/>
+      <foreign-key name="SYS_C0042383" columns="ID" ref-table="ID" ref-schema="TEAMA1DM2F14" ref-catalog="" ref-columns="ID" update-rule="0" delete-rule="1" deferrability="2"/>
+      <exported-key name="SYS_C0042397" table="FORM_COURSE" schema="TEAMA1DM2F14" catalog="" columns="YEAR,TERM,ID"/>
+    </table>
     <procedure name="BLASTN_ALIGN" schema="SYS" catalog="" type="2" remarks="U3RhbmRhbG9uZSBwcm9jZWR1cmUgb3IgZnVuY3Rpb24=">
       <prototype>
         <parameter name="QUERY_SEQUENCE" sqlType="CLOB" precision="0" scale="0" nullable="true" jdbcType="1111" type="1" index="2"/>
