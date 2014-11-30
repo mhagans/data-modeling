@@ -32,7 +32,7 @@ public class Report {
     
     private String CourQ="select * from Form_Course where id= ? and year =? and "+
       "term = ?";
-    private String CourFQ="select id, rank from Form_Course where course_number= ? and year = ? and "+
+    private String CourFQ="select id, ranking from Form_Course where course_number= ? and year = ? and "+
       "term = ? and ranking>0";
     private String CourSQ="select id from Form_Course where course_number = ? and year = ? and term = ?"+
       " and ranking=0";
@@ -77,8 +77,8 @@ public class Report {
             }
         }
     }
-    private void CL(){
-        String cn,term,id,degree,name,d1,d2,d3,t1,t2,t3;
+    private void CL(){//split and show the faculty and students both on the same year.
+        String cn,term,id,degree,name,d1,d2,d3,t1,t2,t3, out;
         int year,rank;
         Connection conn=ConnectDB.getConn();
         PreparedStatement ct,fct,it,st, sct;
@@ -93,7 +93,7 @@ public class Report {
                 term = cs.getString("term");
                 System.out.println(cn + " " + term + "\nStudents: ");
                 //display student info and times
-                sct=conn.prepareStatement(StudCQ);
+                sct=conn.prepareStatement(StudCQ);//should work
                 sct.setString(1, cn);
                 sct.setString(2, term);
                 scs = sct.executeQuery();
@@ -101,11 +101,14 @@ public class Report {
                     id = scs.getString("id");
                     year = scs.getInt("year");
                     //get student info
-                    it=conn.prepareStatement(IdQ);
+                    it=conn.prepareStatement(IdQ);//should work
                     it.setString(1, id);
                     is = it.executeQuery();
                     if (is.next()) {
+                        System.out.println("BLAH");
                         name = is.getString("name");
+                        out=name;
+                        out=out.replaceFirst("\\s+$", "");
                         degree = is.getString("degree");
                         //get student day and times (year is an int so make sure no '')
                         st=conn.prepareStatement(STDQ);
@@ -113,12 +116,12 @@ public class Report {
                         st.setInt(2,year);
                         st.setString(3,term);
                         ss = st.executeQuery();
-                        if (ss.next()) {
+                        if (ss.next()) {//should work
                             d1 = ss.getString("day");
                             t1 = ss.getString("time");
 
-                            System.out.println(year + " " + id + " " + name + " " + degree + " \nPreffered  ordered by preference "
-                                    + "day: " + d1 +", time: " + t1);
+                            System.out.println(year + " " + id + " " + out + " " + degree + " \nPreffered "
+                                    + "Day: " + d1 +", Time: " + t1);
                         }
                         ss.close();
                         st.close();
@@ -145,6 +148,8 @@ public class Report {
                     is = it.executeQuery();
                     if (is.next()) {
                         name = is.getString("name");
+                        out=name;
+                        out=out.replaceFirst("\\s+$", "");
                         degree = is.getString("degree");
                         //get faculty day and times, and rank (year is an int so make sure no '')
                         st=conn.prepareStatement(FTDQ);
@@ -167,7 +172,7 @@ public class Report {
                                 d3 = "";
                             }
 
-                            System.out.println(year + " " + id + " " + name + " " + degree + "\n rank= " + rank + " Preffered  "
+                            System.out.println(year + " " + id + " " + out + " " + degree + "\n rank= " + rank + " Preffered  "
                                     + "ordered by preference " + "days: " + d1 + ", " + d2 + ", " + d3 + ", times: "
                                     + t1 + ", " + t2 + ", " + t3);
                         }
@@ -196,16 +201,14 @@ public class Report {
     * students have the preffered day choosen.
     */
     //might need to figure out days and times problems (faculty adn students for everything but summer
-    //have to choose the same days and times possiblilityes ( might have to restrict to only Pref1)
-    //might just need to signal more clearly prefernce times for student and faculty days and times
-    private void DL() {//going to have a problem if summer terms and D2 and D3 will be null and will always be equal between faculty and student
+    private void DL() {//need to dispaly year better : display year -> courses in year -> students and fac in course
         Connection conn = ConnectDB.getConn();
-        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3;
+        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3, out;
         int sig = 0, sig2 = 0, rank, year;
 
         PreparedStatement ct, fct, it, st, sct;
         //hard code going through list of days
-        String[] days = {"MWF", "MW", "TR", "MTWR", "MW+4", "TR+4"};
+        String[] days = {"MWF ", "MW  ", "TR  ", "MTWR", "MW+4", "TR+4"};
         try {
             ResultSet cs, fcs, is, ss, scs;
             System.out.println("Days: \n");
@@ -221,7 +224,7 @@ public class Report {
                     sct.setString(2, term);
                     scs = sct.executeQuery();
                     while (scs.next()) {
-                        id = scs.getString("name");
+                        id = scs.getString("id");
                         year = scs.getInt("year");
                         
                         it=conn.prepareStatement(IdQ);
@@ -229,6 +232,8 @@ public class Report {
                         is = it.executeQuery();
                         if (is.next()) {//should always occur
                             name = is.getString("name");
+                            out=name;
+                            out=out.replaceFirst("\\s+$", "");
                             degree = is.getString("degree");
                             
                             st=conn.prepareStatement(STDQ);
@@ -251,7 +256,7 @@ public class Report {
                                         sig2 = 1;
                                         System.out.println("Student: \n");
                                     }
-                                    System.out.println(year + " " + id + " " + name + " " + degree + " preffered time: " + t1);
+                                    System.out.println(year + " " + id + " " + out + " " + degree + " preffered time: " + t1);
                                 }
                                 
                             }
@@ -270,7 +275,7 @@ public class Report {
                     fct.setString(2, term);
                     fcs = fct.executeQuery();
                     while (fcs.next()) {
-                        id = fcs.getString("name");
+                        id = fcs.getString("id");
                         year = fcs.getInt("year");
                         rank = fcs.getInt("rank");
 
@@ -279,6 +284,8 @@ public class Report {
                         is = it.executeQuery();
                         if (is.next()) {//should always occur
                             name = is.getString("name");
+                            out=name;
+                            out=out.replaceFirst("\\s+$", "");
                             degree = is.getString("degree");
 
 
@@ -319,7 +326,7 @@ public class Report {
                                         sig2 = 1;
                                         System.out.println("Faculty: \n");
                                     }
-                                    System.out.println(year + " " + id + " " + name + " " + degree + "rank: " + rank + " preffered times: " + t1 + ", " + t2 + ", " + t3);
+                                    System.out.println(year + " " + id + " " + out + " " + degree + "rank: " + rank + " preffered times: " + t1 + ", " + t2 + ", " + t3);
                                 }
 
                             }
@@ -347,9 +354,9 @@ public class Report {
     }
 
     //same as above but by time rather then day
-    private void TL() {
+    private void TL() {//need to dispaly year better : display year -> courses in year -> students and fac in course
         Connection conn = ConnectDB.getConn();
-        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3;
+        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3, out;
         int sig = 0, sig2 = 0, rank, year;
 
         PreparedStatement ct, fct, it, st, sct;
@@ -372,7 +379,7 @@ public class Report {
                     sct.setString(2, term);
                     scs = sct.executeQuery();
                     while (scs.next()) {
-                        id = scs.getString("name");
+                        id = scs.getString("id");
                         year = scs.getInt("year");
 
                         it=conn.prepareStatement(IdQ);
@@ -380,6 +387,8 @@ public class Report {
                         is = it.executeQuery();
                         if (is.next()) {//should always occur
                             name = is.getString("name");
+                            out=name;
+                            out=out.replaceFirst("\\s+$", "");
                             degree = is.getString("degree");
 
                             st=conn.prepareStatement(STDQ);
@@ -402,7 +411,7 @@ public class Report {
                                         sig2 = 1;
                                         System.out.println("Student: \n");
                                     }
-                                    System.out.println(year + " " + id + " " + name + " " + degree + " preffered day: " + d1);
+                                    System.out.println(year + " " + id + " " + out + " " + degree + " preffered day: " + d1);
                                 }
 
                             }
@@ -421,7 +430,7 @@ public class Report {
                     fct.setString(2, term);
                     fcs = fct.executeQuery();
                     while (fcs.next()) {
-                        id = fcs.getString("name");
+                        id = fcs.getString("id");
                         year = fcs.getInt("year");
                         rank = fcs.getInt("rank");
 
@@ -430,6 +439,8 @@ public class Report {
                         is = it.executeQuery();
                         if (is.next()) {//should always occur
                             name = is.getString("name");
+                            out=name;
+                            out=out.replaceFirst("\\s+$", "");
                             degree = is.getString("degree");
 
 
@@ -470,7 +481,7 @@ public class Report {
                                         sig2 = 1;
                                         System.out.println("Faculty: \n");
                                     }
-                                    System.out.println(year + " " + id + " " + name + " " + degree + "rank: " + rank + " preffered days: " + d1 + ", " + d2 + ", " + d3);
+                                    System.out.println(year + " " + id + " " + out + " " + degree + "rank: " + rank + " preffered days: " + d1 + ", " + d2 + ", " + d3);
                                 }
 
                             }
@@ -500,7 +511,7 @@ public class Report {
         //displats student info then a list of courses ordered by year and days anf times and 
         //any faculty that share those
         Connection conn = ConnectDB.getConn();
-        String cn, term, id, degree, name, d1, t1, sig3="";
+        String cn, term, id, degree, name, d1, t1, sig3="", out;
         String ed1, ed2, ed3, et1, et2, et3;
         int sig = 0, sig2 = 0, year;
 
@@ -508,16 +519,17 @@ public class Report {
     
         //get student id and subsequent info
         try {
-            it = conn.prepareStatement(IDSQ);
             ResultSet ds, cs, fcs, is, ss, fis;
+            it = conn.prepareStatement(IDSQ);
             is = it.executeQuery();
             System.out.println("Students:");
             while(is.next()){
                 id=is.getString("id");
                 name=is.getString("name");
+                out=name;
+                out=out.replaceFirst("\\s+$", "");
                 degree=is.getString("degree");
-                
-                System.out.println(name+" "+id+" "+degree);
+                System.out.println(out+" "+id+" "+degree);
                 
                 //get student form for year and term and day and time
                 st=conn.prepareStatement(StudQ);
@@ -540,12 +552,12 @@ public class Report {
 
                         if (sig2 !=year) {
                             sig2 = year;
-                            System.out.print(year+" ");
+                            System.out.println(year);
                         }
                         
                         if(!sig3.equals(term)){
                             sig3=term;
-                            System.out.print(term+" day: "+d1+" time: "+t1);
+                            System.out.println(term+" day: "+d1+" time: "+t1);
                         }
 
                         System.out.println("Course: " + cn);
@@ -599,7 +611,9 @@ public class Report {
                                         fis=fit.executeQuery();
                                         fis.next();
                                         name=fis.getString("name");
-                                        System.out.println(name+" "+id);
+                                        out=name;
+                                        out=out.replaceFirst("\\s+$", "");
+                                        System.out.println(out+" "+id);
                                         fis.close();
                                         fit.close();
                                     }
@@ -632,7 +646,7 @@ public class Report {
     
     private void FL(){
         Connection conn = ConnectDB.getConn();
-        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3, sig="";
+        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3, sig="", out;
         String ed, et;
         int  sig2 = 0, rank, year, load, corP, dayP, timP,rel, 
                 sab, lea, sig3=0;
@@ -647,9 +661,11 @@ public class Report {
             while(is.next()){
                 id=is.getString("id");
                 name=is.getString("name");
+                out=name;
+                out=out.replaceFirst("\\s+$", "");
                 degree=is.getString("degree");
                 
-                System.out.println(name+" "+id+" "+degree);
+                System.out.println(out+" "+id+" "+degree);
                 //get fac form
                 ft=conn.prepareStatement(FacQ);
                 ft.setString(1, id);
@@ -750,7 +766,9 @@ public class Report {
                                         sis=sit.executeQuery();
                                         sis.next();
                                         name=sis.getString("name");
-                                        System.out.println(name +" "+id);
+                                        out=name;
+                                        out=out.replaceFirst("\\s+$", "");
+                                        System.out.println(out +" "+id);
                                         sis.close();
                                         sit.close();
                                     }
