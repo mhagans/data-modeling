@@ -12,15 +12,15 @@ public class Report {
     //gets the courses ordered by term offered
     private String CorQ="select * from Course";
     //gets Student's courses ordered 
-    private String StudCQ="select * from Form_Course where rank=0 and course_number= ? "
+    private String StudCQ="select * from Form_Course where ranking=0 and course_number= ? "
             + "and term= ? order by year";
     //gets id
-    private String FacCQ="select * from Form_Course where rank>0 and course_number= ? "
+    private String FacCQ="select * from Form_Course where ranking>0 and course_number= ? "
             + "and term= ? order by year";
     
     private String IdQ="select * from id where id = ?";//might have a problem with case
     //gets preffered times
-    private String STDQ="select day, time,from Student_Form where id=?"
+    private String STDQ="select day, time from Student_Form where id=?"
             + "and year = ? and term = ?";
     
     private String FTDQ="select day_1, day_2, day_3, time_1,"
@@ -30,10 +30,12 @@ public class Report {
     private String StudQ="select * from Student_Form where id=? order by year";
     private String FacQ="select * from Faculty_Form where id=? order by year";
     
-    private String CourQ="select course_number from Form_Course where id= ? and year =? and "+
+    private String CourQ="select * from Form_Course where id= ? and year =? and "+
       "term = ?";
     private String CourFQ="select id, rank from Form_Course where course_number= ? and year = ? and "+
-      "term = ? and rank>0";
+      "term = ? and ranking>0";
+    private String CourSQ="select id from Form_Course where course_number = ? and year = ? and term = ?"+
+      " and ranking=0";
     
     private String IDSQ="select * from id where Permission=0";
     private String IDFQ="select * from id where Permission=1";
@@ -79,10 +81,10 @@ public class Report {
         String cn,term,id,degree,name,d1,d2,d3,t1,t2,t3;
         int year,rank;
         Connection conn=ConnectDB.getConn();
-        PreparedStatement ct=null,fct=null,it=null,st=null;
+        PreparedStatement ct,fct,it,st, sct;
         
         try{
-            ResultSet cs, fcs, is, ss;
+            ResultSet cs, fcs, is, ss, scs;
             ct=conn.prepareStatement(CorQ);
             cs = ct.executeQuery();
 
@@ -91,13 +93,13 @@ public class Report {
                 term = cs.getString("term");
                 System.out.println(cn + " " + term + "\nStudents: ");
                 //display student info and times
-                ct=conn.prepareStatement(StudCQ);
-                ct.setString(1, cn);
-                ct.setString(2, term);
-                fcs = ct.executeQuery();
-                while (fcs.next()) {
-                    id = fcs.getString("id");
-                    year = fcs.getInt("year");
+                sct=conn.prepareStatement(StudCQ);
+                sct.setString(1, cn);
+                sct.setString(2, term);
+                scs = sct.executeQuery();
+                while (scs.next()) {
+                    id = scs.getString("id");
+                    year = scs.getInt("year");
                     //get student info
                     it=conn.prepareStatement(IdQ);
                     it.setString(1, id);
@@ -125,14 +127,14 @@ public class Report {
                     is.close();
 
                 }
-                fcs.close();
-                fct.close();
+                scs.close();
+                sct.close();
                 //get faculty info
                 System.out.println("Faculty: \n");
                 fct=conn.prepareStatement(FacCQ);
                 fct.setString(1,cn);
                 fct.setString(2, term);
-                fcs = ct.executeQuery();
+                fcs = fct.executeQuery();
                 while (fcs.next()) {
                     id = fcs.getString("id");
                     year = fcs.getInt("year");
@@ -201,26 +203,26 @@ public class Report {
         String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3;
         int sig = 0, sig2 = 0, rank, year;
 
-        PreparedStatement dt = null, ct = null, fct = null, it = null, st = null;
+        PreparedStatement ct, fct, it, st, sct;
         //hard code going through list of days
         String[] days = {"MWF", "MW", "TR", "MTWR", "MW+4", "TR+4"};
         try {
-            ResultSet cs, fcs, is, ss;
+            ResultSet cs, fcs, is, ss, scs;
             System.out.println("Days: \n");
             for (int i = 0; i < 6; i++) {
-                System.out.println(days+"\n");
+                System.out.println(days[i]+"\n");
                 ct=conn.prepareStatement(CorQ);
                 cs = ct.executeQuery();
                 while (cs.next()) {
                     cn = cs.getString("course_number");
                     term = cs.getString("term");
-                    fct=conn.prepareStatement(StudCQ);
-                    fct.setString(1, cn);
-                    fct.setString(2, term);
-                    fcs = fct.executeQuery();
-                    while (fcs.next()) {
-                        id = fcs.getString("name");
-                        year = fcs.getInt("year");
+                    sct=conn.prepareStatement(StudCQ);
+                    sct.setString(1, cn);
+                    sct.setString(2, term);
+                    scs = sct.executeQuery();
+                    while (scs.next()) {
+                        id = scs.getString("name");
+                        year = scs.getInt("year");
                         
                         it=conn.prepareStatement(IdQ);
                         it.setString(1, id);
@@ -259,8 +261,8 @@ public class Report {
                         is.close();
                         it.close();
                     }
-                    fcs.close();
-                    fct.close();
+                    scs.close();
+                    sct.close();
                     sig2 = 0;
 
                     fct=conn.prepareStatement(FacCQ);
@@ -350,28 +352,28 @@ public class Report {
         String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3;
         int sig = 0, sig2 = 0, rank, year;
 
-        PreparedStatement dt = null, ct = null, fct = null, it = null, st = null;
+        PreparedStatement ct, fct, it, st, sct;
         //hard code going through list of days
         String[] times = {"Morning", "Afternoon", "Evening"};
         try {
             
-            ResultSet cs, fcs, is, ss;
+            ResultSet cs, fcs, is, ss, scs;
             System.out.println("Times: \n");
             for (int i = 0; i < 3; i++) {
-                System.out.println(times + "\n");
+                System.out.println(times[i] + "\n");
                 ct=conn.prepareStatement(CorQ);
                 cs = ct.executeQuery();
                 while (cs.next()) {
                     cn = cs.getString("course_number");
                     term = cs.getString("term");
 
-                    fct=conn.prepareStatement(StudCQ);
-                    fct.setString(1, cn);
-                    fct.setString(2, term);
-                    fcs = fct.executeQuery();
-                    while (fcs.next()) {
-                        id = fcs.getString("name");
-                        year = fcs.getInt("year");
+                    sct=conn.prepareStatement(StudCQ);
+                    sct.setString(1, cn);
+                    sct.setString(2, term);
+                    scs = sct.executeQuery();
+                    while (scs.next()) {
+                        id = scs.getString("name");
+                        year = scs.getInt("year");
 
                         it=conn.prepareStatement(IdQ);
                         it.setString(1, id);
@@ -410,8 +412,8 @@ public class Report {
                         is.close();
                         it.close();
                     }
-                    fcs.close();
-                    fct.close();
+                    scs.close();
+                    sct.close();
                     sig2 = 0;
 
                     fct=conn.prepareStatement(FacCQ);
@@ -498,12 +500,11 @@ public class Report {
         //displats student info then a list of courses ordered by year and days anf times and 
         //any faculty that share those
         Connection conn = ConnectDB.getConn();
-        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3, sig3="";
+        String cn, term, id, degree, name, d1, t1, sig3="";
         String ed1, ed2, ed3, et1, et2, et3;
-        int sig = 0, sig2 = 0, rank, year;
+        int sig = 0, sig2 = 0, year;
 
-        PreparedStatement dt = null, ct = null, fct = null, it = null, st = null;
-        PreparedStatement fit=null;
+        PreparedStatement dt, ct, fct, it, st, fit;
     
         //get student id and subsequent info
         try {
@@ -556,7 +557,6 @@ public class Report {
                         fcs=fct.executeQuery();
                         while(fcs.next()){
                             id=fcs.getString("id");
-                            rank=fcs.getInt("rank");
                             //get and dispaly any faculty that have same 
                             //yetm, year, course, day and time
                             dt=conn.prepareStatement(FTDQ);
@@ -632,17 +632,16 @@ public class Report {
     
     private void FL(){
         Connection conn = ConnectDB.getConn();
-        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3;
-        String ed1, ed2, ed3, et1, et2, et3;
-        int sig = 0, sig2 = 0, rank, year, load, corP, dayP, timP,rel, 
+        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3, sig="";
+        String ed, et;
+        int  sig2 = 0, rank, year, load, corP, dayP, timP,rel, 
                 sab, lea, sig3=0;
 
-        PreparedStatement dt = null, ct = null, fct = null, it = null, ft = null;
-        PreparedStatement sit=null;
+        PreparedStatement dt, ct, sct, it, ft, sit;
         
         try{
-            ResultSet ds, cs, fcs, is, fs, sis;
-            it = conn.prepareStatement(IDSQ);
+            ResultSet ds, cs, scs, is, fs, sis;
+            it = conn.prepareStatement(IDFQ);
             is = it.executeQuery();
             System.out.println("Faculty: ");
             while(is.next()){
@@ -673,33 +672,106 @@ public class Report {
                     lea=fs.getInt("leave");
                     
                     if (d2.equals("NULL")) {
-                        ed2 = "";
-                        sig3=1;
+                        d2 = "";
                     }
 
                     if (d3.equals("NULL")) {
-                        ed3 = "";
+                        d3 = "";
                     }
-                    //might need to change how summer day is handeled in pev options.
-                    String out;//might want to build the out put string 
-                    //based on the options that need to be shown this time
-                    //aka if year changed (prob not needed)
-                    
-                    System.out.print(year+" "+term);
-                    //need to display year once
+
+                    if (sig2 != year) {
+                        sig2 = year;
+                        System.out.println(year);
+                    }
                     //then display term , day and time for that term, 
+                    if (!sig.equals(term)) {
+                        sig = term;
+                        System.out.println(term + " day: " + d1+", "+d2+", "+d3 
+                                + " time: " + t1+", "+t2+", "+t3+"\n"
+                                + "Load: "+load+" Preferences 1-3:\nCourses: "
+                                +corP+" Days: "+dayP+ " Times: "+timP);
+                    }
                     //load, course, day, time pref ranking
                     //release, sabbatical, leave options if summer term
+                    if(!d2.equals("")){
+                        System.out.print("Term Expectations: \nCourse Release: ");
+                        if(rel==0)
+                            System.out.print("No ");
+                        else System.out.print("Yes ");
+                        System.out.print("Sabbatical: ");
+                        if(sab==0)
+                            System.out.print("No ");
+                        else System.out.print("Yes ");
+                        System.out.print("Leave: ");
+                        if(lea==0)
+                            System.out.print("No ");
+                        else System.out.print("Yes ");
+                        System.out.println("");
+                    }
                     
                     //then display courses follwed by students that have a common
                     //day and time as the teacher
                     
+                    
+                    ct=conn.prepareStatement(CourFQ);
+                    ct.setString(1, id);
+                    ct.setInt(2, year);
+                    ct.setString(3, term);
+                    cs=ct.executeQuery();
+                    System.out.println("Courses: ");
+                    while(cs.next()){
+                        cn=cs.getString("course_number");
+                        rank=cs.getInt("rank");
+                        System.out.println(cn+" ranking: (1-5) "+rank);
+                        sct=conn.prepareStatement(CourSQ);
+                        sct.setString(1, cn);
+                        sct.setInt(2, year);
+                        sct.setString(3, term);
+                        scs=sct.executeQuery();
+                        while(scs.next()){
+                            id=scs.getString("id");
+                            dt=conn.prepareStatement(STDQ);
+                            dt.setString(1, id);
+                            dt.setInt(2, year);
+                            dt.setString(3, term);
+                            ds=dt.executeQuery();
+                            if(ds.next()){
+                                ed=ds.getString("day");
+                                et=ds.getString("time");
+                                
+                                if(ed.equals(d1)||ed.equals(d2)||ed.equals(d3)){
+                                    if(et.equals(t1)||et.equals(t3)||et.equals(t3)){
+                                        if(sig3==0){
+                                            System.out.println("Students: ");
+                                            sig3=1;
+                                        }
+                                        sit=conn.prepareStatement(IdQ);
+                                        sit.setString(1,id);
+                                        sis=sit.executeQuery();
+                                        sis.next();
+                                        name=sis.getString("name");
+                                        System.out.println(name +" "+id);
+                                        sis.close();
+                                        sit.close();
+                                    }
+                                }
+                            }
+                            ds.close();
+                            dt.close();
+                        }
+                        sig3=0;
+                        scs.close();
+                        sct.close();
+                    }
+                    cs.close();
+                    ct.close();
                 }
-                
+                fs.close();
+                ft.close();
             }
-            
-            
-            
+            is.close();
+            it.close();
+            conn.close();
         }catch (SQLException e){
             System.out.println(e);
             System.exit(0);
