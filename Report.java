@@ -79,7 +79,7 @@ public class Report {
     }
     private void CL(){//split and show the faculty and students both on the same year.
         String cn,term,id,degree,name,d1,d2,d3,t1,t2,t3, out;
-        int year,rank;
+        int year,rank,sig=0;
         Connection conn=ConnectDB.getConn();
         PreparedStatement ct,fct,it,st, sct;
         
@@ -93,24 +93,27 @@ public class Report {
                 term = cs.getString("term");
                 System.out.println(cn + " " + term + "\nStudents: ");
                 //display student info and times
-                sct=conn.prepareStatement(StudCQ);//should work
+                sct=conn.prepareStatement(StudCQ);
                 sct.setString(1, cn);
                 sct.setString(2, term);
                 scs = sct.executeQuery();
                 while (scs.next()) {
                     id = scs.getString("id");
                     year = scs.getInt("year");
+                    if(sig!=year){
+                        System.out.println(year);
+                        sig=year;
+                    }
                     //get student info
-                    it=conn.prepareStatement(IdQ);//should work
+                    it=conn.prepareStatement(IdQ);
                     it.setString(1, id);
                     is = it.executeQuery();
                     if (is.next()) {
-                        System.out.println("BLAH");
                         name = is.getString("name");
                         out=name;
                         out=out.replaceFirst("\\s+$", "");
                         degree = is.getString("degree");
-                        //get student day and times (year is an int so make sure no '')
+                        //get student day and times
                         st=conn.prepareStatement(STDQ);
                         st.setString(1, id);
                         st.setInt(2,year);
@@ -120,8 +123,8 @@ public class Report {
                             d1 = ss.getString("day");
                             t1 = ss.getString("time");
 
-                            System.out.println(year + " " + id + " " + out + " " + degree + " \nPreffered "
-                                    + "Day: " + d1 +", Time: " + t1);
+                            System.out.println(id + " " + out + " " + degree + " \nPreffered "
+                                    + "Day: " + d1 +" Time: " + t1);
                         }
                         ss.close();
                         st.close();
@@ -132,6 +135,7 @@ public class Report {
                 }
                 scs.close();
                 sct.close();
+                sig=0;
                 //get faculty info
                 System.out.println("Faculty: \n");
                 fct=conn.prepareStatement(FacCQ);
@@ -141,6 +145,10 @@ public class Report {
                 while (fcs.next()) {
                     id = fcs.getString("id");
                     year = fcs.getInt("year");
+                    if(sig!=year){
+                        System.out.println(year);
+                        sig=year;
+                    }
                     rank = fcs.getInt("rank");
                     //get faculty info
                     it=conn.prepareStatement(IdQ);
@@ -172,8 +180,8 @@ public class Report {
                                 d3 = "";
                             }
 
-                            System.out.println(year + " " + id + " " + out + " " + degree + "\n rank= " + rank + " Preffered  "
-                                    + "ordered by preference " + "days: " + d1 + ", " + d2 + ", " + d3 + ", times: "
+                            System.out.println(id + " " + out + " " + degree + "\n rank= " + rank + " Preffered  "
+                                    + "ordered by preference " + "Days: " + d1 + ", " + d2 + ", " + d3 + " Times: "
                                     + t1 + ", " + t2 + ", " + t3);
                         }
                         ss.close();
@@ -184,6 +192,7 @@ public class Report {
                     it.close();
 
                 }
+                sig=0;
                 fcs.close();
                 fct.close();
 
@@ -204,7 +213,7 @@ public class Report {
     private void DL() {//need to dispaly year better : display year -> courses in year -> students and fac in course
         Connection conn = ConnectDB.getConn();
         String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3, out;
-        int sig = 0, sig2 = 0, rank, year;
+        int sig = 0, sig2 = 0, rank, year,sig3=0;
 
         PreparedStatement ct, fct, it, st, sct;
         //hard code going through list of days
@@ -256,7 +265,11 @@ public class Report {
                                         sig2 = 1;
                                         System.out.println("Student: \n");
                                     }
-                                    System.out.println(year + " " + id + " " + out + " " + degree + " preffered time: " + t1);
+                                    if (sig3 != year) {
+                                        System.out.println(year);
+                                        sig3 = year;
+                                    }
+                                    System.out.println(id + " " + out + " " + degree + " preffered time: " + t1);
                                 }
                                 
                             }
@@ -269,6 +282,7 @@ public class Report {
                     scs.close();
                     sct.close();
                     sig2 = 0;
+                    sig3=0;
 
                     fct=conn.prepareStatement(FacCQ);
                     fct.setString(1, cn);
@@ -326,7 +340,11 @@ public class Report {
                                         sig2 = 1;
                                         System.out.println("Faculty: \n");
                                     }
-                                    System.out.println(year + " " + id + " " + out + " " + degree + "rank: " + rank + " preffered times: " + t1 + ", " + t2 + ", " + t3);
+                                    if (sig3 != year) {
+                                        System.out.println(year);
+                                        sig3 = year;
+                                    }
+                                    System.out.println(id + " " + out + " " + degree + "rank: " + rank + " preffered times: " + t1 + ", " + t2 + ", " + t3);
                                 }
 
                             }
@@ -340,6 +358,7 @@ public class Report {
                     fct.close();
                     sig2 = 0;
                     sig = 0;
+                    sig3=0;
                 }
                 cs.close();
                 ct.close();
@@ -357,7 +376,7 @@ public class Report {
     private void TL() {//need to dispaly year better : display year -> courses in year -> students and fac in course
         Connection conn = ConnectDB.getConn();
         String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3, out;
-        int sig = 0, sig2 = 0, rank, year;
+        int sig = 0, sig2 = 0, rank, year, sig3=0;
 
         PreparedStatement ct, fct, it, st, sct;
         //hard code going through list of days
@@ -411,7 +430,11 @@ public class Report {
                                         sig2 = 1;
                                         System.out.println("Student: \n");
                                     }
-                                    System.out.println(year + " " + id + " " + out + " " + degree + " preffered day: " + d1);
+                                    if (sig3 != year) {
+                                        System.out.println(year);
+                                        sig3 = year;
+                                    }
+                                    System.out.println(id + " " + out + " " + degree + " preffered day: " + d1);
                                 }
 
                             }
@@ -424,6 +447,7 @@ public class Report {
                     scs.close();
                     sct.close();
                     sig2 = 0;
+                    sig3=0;
 
                     fct=conn.prepareStatement(FacCQ);
                     fct.setString(1, cn);
@@ -481,7 +505,11 @@ public class Report {
                                         sig2 = 1;
                                         System.out.println("Faculty: \n");
                                     }
-                                    System.out.println(year + " " + id + " " + out + " " + degree + "rank: " + rank + " preffered days: " + d1 + ", " + d2 + ", " + d3);
+                                    if (sig == year) {
+                                        System.out.println(year);
+                                        sig = year;
+                                    }
+                                    System.out.println(id + " " + out + " " + degree + "rank: " + rank + " preffered days: " + d1 + ", " + d2 + ", " + d3);
                                 }
 
                             }
@@ -495,6 +523,7 @@ public class Report {
                     fct.close();
                     sig2 = 0;
                     sig = 0;
+                    sig3=0;
                 }
                 cs.close();
                 ct.close();
