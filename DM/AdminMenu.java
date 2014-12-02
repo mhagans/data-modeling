@@ -1,8 +1,9 @@
 
 package DM;
 
-import java.util.Scanner;
 import DM.LoginServices.AccessLevel;
+
+import java.util.Scanner;
 
 public class AdminMenu
 {
@@ -19,6 +20,7 @@ public class AdminMenu
     }
     
     public AdminMenu(){
+
         in = new Scanner(System.in);
 
         int input = 0;

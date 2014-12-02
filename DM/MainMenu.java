@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 
+import DM.LoginServices.AccessLevel;
+
 import java.util.Scanner;
 
 public class MainMenu {
@@ -39,13 +41,13 @@ public class MainMenu {
                     }*/
                     break;
                 case 2:
-					if((user = LoginServices.login(LoginServices.AccessLevel.FACULTY)) != null)
-                    {
-                    new Faculty(user);
+					if((user = LoginServices.login(AccessLevel.FACULTY)) != null)
+					{
+						new Faculty(user);
                     }
                     break;
                 case 3:
-					if((user = LoginServices.login(LoginServices.AccessLevel.ADMIN)) != null)
+					if((user = LoginServices.login(AccessLevel.ADMIN)) != null)
                 {
 						new AdminMenu();
                 }
