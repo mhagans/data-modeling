@@ -21,14 +21,11 @@ public class StudentMenu {
     //Constructor builds and populates linked list of student objects
     StudentMenu(){
     	Statement stmt = null;
-    	String queryid = "SELECT * FROM id WHERE Permission = 0";   	
-    	
+    	String queryid = "SELECT * FROM id WHERE Permission = 0";   	   	
     	try{
     	Connection conn = ConnectDB.getConn();
     	stmt = conn.createStatement();	
-		ResultSet rs = stmt.executeQuery(queryid);
-    	
-    		 
+		ResultSet rs = stmt.executeQuery(queryid);    		 
     		studenttable = new Hashtable();
     		 while (rs.next()) {
     			 
@@ -37,16 +34,10 @@ public class StudentMenu {
     			 student.setID(studentid);
     			 student.setName(rs.getString("name"));    			 
     			 student.setDegree(rs.getString("degree"));    			 
-    			 studenttable.put(studentid, student);					//put student object in hashtable		 
-    			 
-    			
-    		 }
-    		 								//close DB connection
-    		 
-    		 displayStudentMenu();			//display stuff
-    		
-    	}
-    	
+    			 studenttable.put(studentid, student);					//put student object in hashtable	   			
+    		 }    		 
+    		 displayStudentMenu();			//display stuff  		
+    	}    	
     	catch (SQLException e ) {
             e.printStackTrace();
         } finally {
@@ -55,17 +46,14 @@ public class StudentMenu {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} 
+				} 
           }
         }
-    }
-    
+    }    
     public void displayStudentMenu(){
     	System.out.println("Hello, please select a student ID: \n");
-    	Scanner reader = new Scanner(System.in);
-    	
-    	Student stud = studenttable.get(reader.next());			//pull student from table
-    	
+    	Scanner reader = new Scanner(System.in);    	
+    	Student stud = studenttable.get(reader.next());			//pull student from table    	
     	if(stud != null){										//if it was found display attributes
     		System.out.println("Student ID: " + stud.getID() + "\n");													
     		System.out.println("Student Name: " + stud.getName() + "\n");
@@ -78,49 +66,41 @@ public class StudentMenu {
     	}
     	
     	else{
-    		System.out.println("student not found, create new student? \n");		//go to create student method if not found
-    		
-    	}
-    	
+    		System.out.println("student not found, create new student? \n");		//go to create student method if not found    		
+    	}    	
     }
    private void createStudent(){
-	   Scanner reader = new Scanner(System.in);	   
-	   
+	   Scanner reader = new Scanner(System.in);	   	   
 	   System.out.println("Student ID: ");
 	   String id = reader.next();
 	   while(studenttable.get(id) != null){
 		   System.out.println("\nThat ID is taken, select a different ID: ");
 		   id = reader.next();
-	   }
-	   
-	   	System.out.println("Student Name: ");
+	   }	   
+	   	System.out.println("\nStudent Name: ");
 	   	String name = reader.next();
-		System.out.println("Student Degree: ");
+		System.out.println("\nStudent Degree: ");
 		String degree = reader.next();
-		System.out.println("Student Year: ");
+		System.out.println("\nStudent Year: ");
 		int year = reader.nextInt();
-		System.out.println("Student Term: ");
+		System.out.println("\nStudent Term: ");
 		String term = reader.next();
-		System.out.println("Student Preffered Days: ");
+		System.out.println("\nStudent Prefered Days (MW, TR, or MWF: ");
 		String prefdays = reader.next();
-		System.out.println("Student Preffered Times: ");
-		String preftimes = reader.next();
-		
-		Statement stmt = null;
-		
+		System.out.println("\nStudent Prefered Times (morning, afternoon, evening): ");
+		String preftimes = reader.next();		
+		Statement stmt = null;		
 		 String queryid = String.format("INSERT INTO id (id, name, degree, Permission) values %s %s %s  %i;",
                  id, name, degree, 0);
 		 String querystud = String.format("INSERT INTO Student_Form (id, year, term, day, time) values %s %s %s %s %s;",
-                 id, year, term, prefdays, preftimes);
-		 	
-		 
+                 id, year, term, prefdays, preftimes);		 
 		 try{
 		    	Connection conn = ConnectDB.getConn();
 		    	stmt = conn.createStatement();	
 				stmt.executeQuery(queryid);
 				stmt.executeQuery(querystud);
-		 }
-		 
+				System.out.println("\nStudent added");
+		 }		 
 		 catch (SQLException e ) {
 	            e.printStackTrace();
 	        } finally {
