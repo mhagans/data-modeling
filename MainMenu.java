@@ -19,13 +19,13 @@ public class MainMenu {
                 case 1:
                     break;
                 case 2:
-					if((user = LoginServices.login(AccessLevel.FACULTY) != null))
+					if((user = LoginServices.login(LoginServices.AccessLevel.FACULTY)) != null)
 					{
 						new Faculty();
 					}
                     break;
                 case 3:
-					if((user = LoginServices.login(AccessLevel.ADMIN) != null))
+					if((user = LoginServices.login(LoginServices.AccessLevel.ADMIN)) != null)
 					{
 						new AdminMenu();
 					}
