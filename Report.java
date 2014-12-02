@@ -137,7 +137,7 @@ public class Report {
                 sct.close();
                 sig=0;
                 //get faculty info
-                System.out.println("Faculty: \n");
+                System.out.println("Faculty:");
                 fct=conn.prepareStatement(FacCQ);
                 fct.setString(1,cn);
                 fct.setString(2, term);
@@ -180,8 +180,8 @@ public class Report {
                                 d3 = "";
                             }
 
-                            System.out.println(id + " " + out + " " + degree + "\n rank= " + rank + " Preffered  "
-                                    + "ordered by preference " + "Days: " + d1 + ", " + d2 + ", " + d3 + " Times: "
+                            System.out.println(id + " " + out + " " + degree + "\nRank= " + rank + " Preffered: "
+                                    + "(ordered by preference) " + "Days: " + d1 + ", " + d2 + ", " + d3 + " Times: "
                                     + t1 + ", " + t2 + ", " + t3);
                         }
                         ss.close();
@@ -195,7 +195,7 @@ public class Report {
                 sig=0;
                 fcs.close();
                 fct.close();
-
+                System.out.println();
             }
             cs.close();
             ct.close();
@@ -220,9 +220,9 @@ public class Report {
         String[] days = {"MWF ", "MW  ", "TR  ", "MTWR", "MW+4", "TR+4"};
         try {
             ResultSet cs, fcs, is, ss, scs;
-            System.out.println("Days: \n");
+            System.out.println("Days:");
             for (int i = 0; i < 6; i++) {
-                System.out.println(days[i]+"\n");
+                System.out.println(days[i]);
                 ct=conn.prepareStatement(CorQ);
                 cs = ct.executeQuery();
                 while (cs.next()) {
@@ -263,7 +263,7 @@ public class Report {
                                     }
                                     if (sig2 == 0) {
                                         sig2 = 1;
-                                        System.out.println("Student: \n");
+                                        System.out.println("Student:");
                                     }
                                     if (sig3 != year) {
                                         System.out.println(year);
@@ -338,7 +338,7 @@ public class Report {
                                     }
                                     if (sig2 == 0) {
                                         sig2 = 1;
-                                        System.out.println("Faculty: \n");
+                                        System.out.println("Faculty:");
                                     }
                                     if (sig3 != year) {
                                         System.out.println(year);
@@ -362,6 +362,7 @@ public class Report {
                 }
                 cs.close();
                 ct.close();
+                System.out.println();
             }
             conn.close();
         } catch (SQLException e) {
@@ -384,9 +385,9 @@ public class Report {
         try {
             
             ResultSet cs, fcs, is, ss, scs;
-            System.out.println("Times: \n");
+            System.out.println("Times:");
             for (int i = 0; i < 3; i++) {
-                System.out.println(times[i] + "\n");
+                System.out.println(times[i]);
                 ct=conn.prepareStatement(CorQ);
                 cs = ct.executeQuery();
                 while (cs.next()) {
@@ -428,7 +429,7 @@ public class Report {
                                     }
                                     if (sig2 == 0) {
                                         sig2 = 1;
-                                        System.out.println("Student: \n");
+                                        System.out.println("Student:");
                                     }
                                     if (sig3 != year) {
                                         System.out.println(year);
@@ -503,7 +504,7 @@ public class Report {
                                     }
                                     if (sig2 == 0) {
                                         sig2 = 1;
-                                        System.out.println("Faculty: \n");
+                                        System.out.println("Faculty:");
                                     }
                                     if (sig == year) {
                                         System.out.println(year);
@@ -525,6 +526,7 @@ public class Report {
                     sig = 0;
                     sig3=0;
                 }
+                System.out.println();
                 cs.close();
                 ct.close();
             }
@@ -656,6 +658,7 @@ public class Report {
                         fcs.close();
                         fct.close();
                     }
+                    System.out.println();
                     cs.close();
                     ct.close();
                 }
@@ -810,6 +813,7 @@ public class Report {
                         scs.close();
                         sct.close();
                     }
+                    System.out.println();
                     cs.close();
                     ct.close();
                 }
