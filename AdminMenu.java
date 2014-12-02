@@ -22,24 +22,23 @@ public class AdminMenu
     {
         in = new Scanner(System.in);
 
-        String input="";
-        int unin=0;
+        int input = 0;
 
-        display: while (true)
+        display: while (input != 4)
         {
             System.out.println("Admin Menu\n"
                     + "1) Create Faculty Accoun\n"
                     + "2) Create Admin Account\n"
                     + "3) View Reports\n"
                     + "4) Back");
-            unin = in.nextInt();
-            switch (unin) 
+            input = in.nextInt();
+            switch (input)
             {
                 case 1:
-                    createUser(AccessLevel.FACULTY);
+                  //  createUser(AccessLevel.FACULTY);
                     break;
                 case 2:
-                    createUser(AccessLevel.ADMIN);
+                    //createUser(AccessLevel.ADMIN);
                     break;
                 case 3:
                     new Report();
@@ -51,12 +50,10 @@ public class AdminMenu
             }
         }
     }
-    
-    
 
     private void createUser(AccessLevel accessLevel)
     {
-        System.out.println("Creating new " + accessLevel.name().toUpperCase()+ " level user");
+        System.out.println("Creating new " + accessLevel.name().toUpperCase() + " level user");
         System.out.println("---------------------------------------------");
         
         System.out.print("Enter the users username: ");
@@ -75,6 +72,6 @@ public class AdminMenu
         
         String areaOfExpertise = in.next();
 
-        LoginServices.createUser(username, password, name, areaOfExpertise, accessLevel);
+        //LoginServices.createUser(username, password, name, areaOfExpertise, accessLevel);
     }
 }
