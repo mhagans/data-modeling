@@ -44,7 +44,7 @@ public class Report {
     public Report(){
         
         Scanner r=new Scanner(System.in);
-        String uin="";
+        int uin=0;
         display: while (true) {
             System.out.println("Reports\n"
                     + "1) Course Listing\n"
@@ -53,14 +53,24 @@ public class Report {
                     + "4) Student Listing\n"
                     + "5) Faculty Listing\n"
                     + "6) Back");
-            uin = r.next();
+            uin = r.nextInt();
             switch (uin) {
-                case "1":
+                case 1:
                     CL();
                     break;
-                case "2":
+                case 2:
                     DL();
                     break;
+<<<<<<< HEAD:DM/Report.java
+                case 3:
+                    //TL();
+                    break;
+                case 4:
+                    //SL();
+                    break;
+                case 5:
+                    //FL();
+=======
                 case "3":
                     TL();
                     break;
@@ -69,8 +79,9 @@ public class Report {
                     break;
                 case "5":
                     FL();
+>>>>>>> ccd67cf3bd48398299da9bb78d433f90519e80bf:Report.java
                     break;
-                case "6":
+                case 6:
                     break display;
                 default:
                     System.out.println("Bad input: please enter a number between 1-6");
@@ -149,7 +160,7 @@ public class Report {
                         System.out.println(year);
                         sig=year;
                     }
-                    rank = fcs.getInt("rank");
+                    rank = fcs.getInt("ranking");
                     //get faculty info
                     it=conn.prepareStatement(IdQ);
                     it.setString(1, id);
@@ -291,7 +302,7 @@ public class Report {
                     while (fcs.next()) {
                         id = fcs.getString("id");
                         year = fcs.getInt("year");
-                        rank = fcs.getInt("rank");
+                        rank = fcs.getInt("ranking");
 
                         it=conn.prepareStatement(IdQ);
                         it.setString(1, id);
@@ -456,7 +467,7 @@ public class Report {
                     while (fcs.next()) {
                         id = fcs.getString("id");
                         year = fcs.getInt("year");
-                        rank = fcs.getInt("rank");
+                        rank = fcs.getInt("ranking");
 
                         it=conn.prepareStatement(IdQ);
                         it.setString(1, id);
@@ -758,7 +769,7 @@ public class Report {
                     //day and time as the teacher
                     
                     
-                    ct=conn.prepareStatement(CourFQ);
+                    ct=conn.prepareStatement(CourQ);
                     ct.setString(1, id);
                     ct.setInt(2, year);
                     ct.setString(3, term);
@@ -766,7 +777,7 @@ public class Report {
                     System.out.println("Courses: ");
                     while(cs.next()){
                         cn=cs.getString("course_number");
-                        rank=cs.getInt("rank");
+                        rank=cs.getInt("ranking");
                         System.out.println(cn+" ranking: (1-5) "+rank);
                         sct=conn.prepareStatement(CourSQ);
                         sct.setString(1, cn);

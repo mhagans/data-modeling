@@ -16,7 +16,7 @@ public class LoginServices
     private static final String salt = "&y81*d5jp8dn4n0@-$u-_)w30+j9*lksh)r$c&2v(bu#%$8!2t";
     public enum AccessLevel
     {
-        FACULTY, ADMIN
+        STUDENT, FACULTY, ADMIN
     }
 
     /**
@@ -39,7 +39,6 @@ public class LoginServices
             Connection connection = ConnectDB.getConn();
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
-
             System.out.println("User was created successfully");
 
             connection.close();
@@ -97,6 +96,7 @@ public class LoginServices
                 PreparedStatement statement = conn.prepareStatement("SELECT id, Permission FROM id WHERE id = ?");
                 statement.setString(1, username);
                 ResultSet resultSet = statement.executeQuery();
+                resultSet.next();
 
                 if(resultSet.getString("id") != null) //Username found in database
                 {
@@ -155,9 +155,10 @@ public class LoginServices
                 PreparedStatement statement = conn.prepareStatement("SELECT password FROM id WHERE id = ?");
                 statement.setString(1, username);
                 ResultSet resultSet = statement.executeQuery();
+                resultSet.next();
                 try
                 {
-                    if(encryptPassword(password).equals(resultSet.getString("password"))) //Correct password entered
+                    if(encryptPassword(password).equals(resultSet.getString("password").trim())) //Correct password entered
                     {
                         conn.close();
                         return true;
