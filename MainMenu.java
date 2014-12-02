@@ -1,28 +1,37 @@
 
 package DM;
+import DM.LoginServices.AccessLevel;
 
 import java.util.Scanner;
 
 public class MainMenu {
     public MainMenu(){
         Scanner r=new Scanner(System.in);
-        String uin="";
-        while (!uin.equals("4")) {
+        int uin=0;
+		String user = null;
+        while (uin != 4) {
             System.out.println("Main Menu\n"
                     + "1) Student Menu\n"
                     + "2) Faculty Menu\n"
                     + "3) Admin Menu\n"
                     + "4) Exit");
-            uin = r.next();
+            uin = r.nextInt();
             switch (uin) {
-                case "1":
+                case 1:
                     break;
-                case "2":
+                case 2:
+                    if((user = DM.LoginServices.login(AccessLevel.FACULTY)) != null)
+                    {
+                    //new Faculty(user);
+                    }
                     break;
-                case "3":
-                    new AdminMenu();
+                case 3:
+                if((user = DM.LoginServices.login(AccessLevel.ADMIN)) != null)
+                {
+						new AdminMenu();
+                }
                     break;
-                case "4":
+                case 4:
                     System.exit(1);
                     break;
                 default:

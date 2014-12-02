@@ -44,7 +44,7 @@ public class Report {
     public Report(){
         
         Scanner r=new Scanner(System.in);
-        int uin;
+        int uin=0;
         display: while (true) {
             System.out.println("Reports\n"
                     + "1) Course Listing\n"

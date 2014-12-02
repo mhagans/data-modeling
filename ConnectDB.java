@@ -10,7 +10,8 @@ public class ConnectDB{
     
     
     public static void main(String[] args)throws SQLException{
-        Connection conn=getConn();
+        Connection conn=getConn();//used to see if you are on the school network or not
+        //if you are not it will throw an error and exit
         conn.close();
         while(1==1){
         new MainMenu();
