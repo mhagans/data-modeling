@@ -35,13 +35,13 @@ public class LoginServices
         {
             Connection connection = ConnectDB.getConn();
             PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO id (id, name, degree, password, Permission) values (?, ?, ?, ?, ?)");
+                    "INSERT INTO id values (?, ?, ?, ?, ?)");
             statement.setString(1, username);
             statement.setString(2, name);
             statement.setString(3, degree);
             statement.setString(4, encryptPassword(password));
             statement.setInt(5, accessLevel.ordinal());
-            statement.execute();
+            statement.executeUpdate();
             System.out.println("User was created successfully");
 
             connection.close();

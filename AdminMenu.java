@@ -75,7 +75,8 @@ public class AdminMenu
         System.out.print("Enter the users area of expertise: ");
         
         String areaOfExpertise = in.next();
+                
 
-        //LoginServices.createUser(username, password, name, areaOfExpertise, accessLevel);
+        LoginServices.createUser(username, name, areaOfExpertise,password, accessLevel);
     }
 }
