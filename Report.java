@@ -758,7 +758,7 @@ public class Report {
                     //day and time as the teacher
                     
                     
-                    ct=conn.prepareStatement(CourFQ);
+                    ct=conn.prepareStatement(CourQ);
                     ct.setString(1, id);
                     ct.setInt(2, year);
                     ct.setString(3, term);
