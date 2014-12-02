@@ -21,7 +21,7 @@ public class Student {
 		
 	Student(String id){				//populate with data from the other table
 	Statement stmt = null;
-   	String queryid = "SELECT year, term, id FROM Student_Form WHERE id = " + id;   
+   	String queryid = "SELECT * FROM Student_Form WHERE id = " + id;   
 	Connection conn = ConnectDB.getConn();
 	try{			
 			stmt = conn.createStatement();	
@@ -29,7 +29,7 @@ public class Student {
 			while (rs.next()) {
 				setYear(rs.getString("year"));
 				setTerm(rs.getString("term"));
-				setDays(rs.getString("days"));
+				setDays(rs.getString("day"));
 				setTimes(rs.getString("time"));				
 			}
 			

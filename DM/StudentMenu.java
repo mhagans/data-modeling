@@ -1,34 +1,27 @@
 package DM;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Scanner;
 
 //Student menu; gets list of students, displays students allows a student to be selected, allows a student to be created
 //try to only run this once
-public class StudentMenu {
-	private String userName="teama1dm2f14";//oracle account user name goes here
-    private String password="team1bcchlrt";//password goes here
-    private String url="jdbc:oracle:thin:@olympia.unfcsd.unf.edu:1521:dworcl";
-    private Hashtable<String, Student> studenttable;
-    
-       
+public class StudentMenu {	
+    private Hashtable<String, Student> studenttable;       
     //Constructor builds and populates linked list of student objects
     StudentMenu(){
     	Statement stmt = null;
     	String queryid = "SELECT * FROM id WHERE Permission = 0";   	   	
-    	try{
-    	Connection conn = ConnectDB.getConn();
+    	try{    		
+    	Connection conn = ConnectDB.getConn();    	
     	stmt = conn.createStatement();	
 		ResultSet rs = stmt.executeQuery(queryid);    		 
     		studenttable = new Hashtable();
-    		 while (rs.next()) {
-    			 
+    		 while (rs.next()) {    			 
     			 String studentid = rs.getString("id");					//grab id
     			 Student student = new Student(studentid);					//make a student
     			 student.setID(studentid);
@@ -51,7 +44,13 @@ public class StudentMenu {
         }
     }    
     public void displayStudentMenu(){
-    	System.out.println("Hello, please select a student ID: \n");
+    	System.out.println("Listed Students: ");
+    	Enumeration e = studenttable.keys();
+    	while(e.hasMoreElements()){
+    		System.out.println(e.nextElement());
+    		System.out.println("\n");
+    	}    	
+    	System.out.println("Please select a student ID: \n");
     	Scanner reader = new Scanner(System.in);    	
     	Student stud = studenttable.get(reader.next());			//pull student from table    	
     	if(stud != null){										//if it was found display attributes
@@ -60,13 +59,14 @@ public class StudentMenu {
     		System.out.println("Student Degree: " + stud.getDegree() + "\n");
     		System.out.println("Student Year: " + stud.getYear() + "\n");
     		System.out.println("Student Term: " + stud.getTerm() + "\n");
-    		System.out.println("Student Preffered Days: " + stud.getDays() + "\n");
-    		System.out.println("Student Preffered Times: " + stud.getTimes() + "\n");
+    		System.out.println("Student Prefered Days: " + stud.getDays() + "\n");
+    		System.out.println("Student Prefered Times: " + stud.getTimes() + "\n");
     		//a thing for classes
     	}
     	
     	else{
-    		System.out.println("student not found, create new student? \n");		//go to create student method if not found    		
+    		System.out.println("student not found, create new student? \n");		//go to create student method if not found   
+    		createStudent();
     	}    	
     }
    private void createStudent(){
