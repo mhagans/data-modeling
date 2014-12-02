@@ -44,7 +44,7 @@ public class Report {
     public Report(){
         
         Scanner r=new Scanner(System.in);
-        String uin="";
+        int uin;
         display: while (true) {
             System.out.println("Reports\n"
                     + "1) Course Listing\n"
@@ -53,24 +53,24 @@ public class Report {
                     + "4) Student Listing\n"
                     + "5) Faculty Listing\n"
                     + "6) Back");
-            uin = r.next();
+            uin = r.nextInt();
             switch (uin) {
-                case "1":
+                case 1:
                     CL();
                     break;
-                case "2":
+                case 2:
                     DL();
                     break;
-                case "3":
+                case 3:
                     TL();
                     break;
-                case "4":
+                case 4:
                     SL();
                     break;
-                case "5":
+                case 5:
                     FL();
                     break;
-                case "6":
+                case 6:
                     break display;
                 default:
                     System.out.println("Bad input: please enter a number between 1-6");
