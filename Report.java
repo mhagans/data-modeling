@@ -78,7 +78,7 @@ public class Report {
         }
     }
     private void CL(){//split and show the faculty and students both on the same year.
-        String cn,term,id,degree,name,d1,d2,d3,t1,t2,t3, out;
+        String cn,term,id,degree,name,d1,d2,d3,t1,t2,t3, out, cname;
         int year,rank,sig=0;
         Connection conn=ConnectDB.getConn();
         PreparedStatement ct,fct,it,st, sct;
@@ -91,7 +91,10 @@ public class Report {
             while (cs.next()) {
                 cn = cs.getString("course_number");
                 term = cs.getString("term");
-                System.out.println(cn + " " + term + "\nStudents: ");
+                cname=cs.getString("name");
+                out=cname;
+                out=out.replaceFirst("\\s+$", "");
+                System.out.println(out+" "+cn + " " + term + "\nStudents: ");
                 //display student info and times
                 sct=conn.prepareStatement(StudCQ);
                 sct.setString(1, cn);
@@ -212,7 +215,7 @@ public class Report {
     //might need to figure out days and times problems (faculty adn students for everything but summer
     private void DL() {//need to dispaly year better : display year -> courses in year -> students and fac in course
         Connection conn = ConnectDB.getConn();
-        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3, out;
+        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3, out, cname, cout;
         int sig = 0, sig2 = 0, rank, year,sig3=0;
 
         PreparedStatement ct, fct, it, st, sct;
@@ -228,6 +231,9 @@ public class Report {
                 while (cs.next()) {
                     cn = cs.getString("course_number");
                     term = cs.getString("term");
+                    cname=cs.getString("name");
+                    cout=cname;
+                    cout=cout.replaceFirst("\\s+$", "");
                     sct=conn.prepareStatement(StudCQ);
                     sct.setString(1, cn);
                     sct.setString(2, term);
@@ -259,7 +265,7 @@ public class Report {
                                 if (d1.equals(days[i])) {
                                     if (sig == 0) {
                                         sig = 1;
-                                        System.out.println("Course: " + cn + " term: " + term);
+                                        System.out.println("Course: "+cout+" " + cn + " term: " + term);
                                     }
                                     if (sig2 == 0) {
                                         sig2 = 1;
@@ -334,7 +340,7 @@ public class Report {
                                 if (d1.equals(days[i]) || d2.equals(days[i]) || d3.equals(days[i])) {
                                     if (sig == 0) {
                                         sig = 1;
-                                        System.out.println("Course: " + cn + " term: " + term);
+                                        System.out.println("Course: "+cout+" " + cn + " term: " + term);
                                     }
                                     if (sig2 == 0) {
                                         sig2 = 1;
@@ -376,7 +382,7 @@ public class Report {
     //same as above but by time rather then day
     private void TL() {//need to dispaly year better : display year -> courses in year -> students and fac in course
         Connection conn = ConnectDB.getConn();
-        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3, out;
+        String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3, out, cname, cout;
         int sig = 0, sig2 = 0, rank, year, sig3=0;
 
         PreparedStatement ct, fct, it, st, sct;
@@ -393,6 +399,9 @@ public class Report {
                 while (cs.next()) {
                     cn = cs.getString("course_number");
                     term = cs.getString("term");
+                    cname=cs.getString("name");
+                    cout=cname;
+                    cout=cout.replaceFirst("\\s+$", "");
 
                     sct=conn.prepareStatement(StudCQ);
                     sct.setString(1, cn);
@@ -425,7 +434,7 @@ public class Report {
                                 if (t1.equals(times[i])) {
                                     if (sig == 0) {
                                         sig = 1;
-                                        System.out.println("Course: " + cn + " term: " + term);
+                                        System.out.println("Course: "+cout+" " + cn + " term: " + term);
                                     }
                                     if (sig2 == 0) {
                                         sig2 = 1;
@@ -500,7 +509,7 @@ public class Report {
                                 if (t1.equals(times[i]) || t2.equals(times[i]) || t3.equals(times[i])) {
                                     if (sig == 0) {
                                         sig = 1;
-                                        System.out.println("Course: " + cn + " term: " + term);
+                                        System.out.println("Course: "+cout+" " + cn + " term: " + term);
                                     }
                                     if (sig2 == 0) {
                                         sig2 = 1;
@@ -542,7 +551,7 @@ public class Report {
         //displats student info then a list of courses ordered by year and days anf times and 
         //any faculty that share those
         Connection conn = ConnectDB.getConn();
-        String cn, term, id, degree, name, d1, t1, sig3="", out;
+        String cn, term, id, degree, name, d1, t1, sig3="", out, cname, cout;
         String ed1, ed2, ed3, et1, et2, et3;
         int sig = 0, sig2 = 0, year;
 
@@ -580,7 +589,6 @@ public class Report {
                     cs = ct.executeQuery();
                     while (cs.next()) {
                         cn = cs.getString("course_number");
-
                         if (sig2 !=year) {
                             sig2 = year;
                             System.out.println(year);
@@ -591,7 +599,7 @@ public class Report {
                             System.out.println(term+" day: "+d1+" time: "+t1);
                         }
 
-                        System.out.println("Course: " + cn);
+                        System.out.println("Course: "+ cn);
                         //get all faculty that are teaching those courses
                         fct=conn.prepareStatement(CourFQ);
                         fct.setString(1, cn);
@@ -679,7 +687,7 @@ public class Report {
     private void FL(){
         Connection conn = ConnectDB.getConn();
         String cn, term, id, degree, name, d1, d2, d3, t1, t2, t3, sig="", out;
-        String ed, et;
+        String ed, et, cout, cname;
         int  sig2 = 0, rank, year, load, corP, dayP, timP,rel, 
                 sab, lea, sig3=0;
 
