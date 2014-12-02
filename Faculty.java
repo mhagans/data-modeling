@@ -22,7 +22,7 @@ public class Faculty {
 
 
     //Menu Start
-    public Faculty(){
+    public Faculty(String iin){
         // Variables
         int selection = 0;
         int numberOfCourses = 0;
@@ -43,18 +43,18 @@ public class Faculty {
         String[] time_of_day = new String[3];
         String[] days_of_the_week = new String[3];
         int ranking = 0;
-        String id = "00787220";
+        String id = iin;
         BufferedReader br;
         ArrayList<Course> courseList = null;
 
-        while(true){
+        display: while (true){
 
             //region Select Term
             System.out.println("Please select a term then press Enter.\n" +
                                 "1. Fall " + year + "\n" +
                                 "2. Spring " + nextYear + "\n" +
                                 "3. Summer " + nextYear + "\n" +
-                                "4. Quit\n");
+                                "4. Back\n");
             br = new BufferedReader(new InputStreamReader(System.in));
 
             try {
@@ -92,9 +92,7 @@ public class Faculty {
                     isSummer = true;
                     break;
                 case 4:
-                    System.out.println("Exiting Preference Form");
-                    System.exit(1);
-                    break;
+                    break display;
                 default:
                     term = "Invalid Selection";
                     break;

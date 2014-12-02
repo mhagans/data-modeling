@@ -41,7 +41,7 @@ public class MainMenu {
                 case 2:
 					if((user = LoginServices.login(LoginServices.AccessLevel.FACULTY)) != null)
                     {
-                    //new Faculty(user);
+                    new Faculty(user);
                     }
                     break;
                 case 3:
