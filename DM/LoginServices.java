@@ -158,7 +158,7 @@ public class LoginServices
                 resultSet.next();
                 try
                 {
-                    if(encryptPassword(password).equals(resultSet.getString("password"))) //Correct password entered
+                    if(encryptPassword(password).equals(resultSet.getString("password").trim())) //Correct password entered
                     {
                         conn.close();
                         return true;
