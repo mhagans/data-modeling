@@ -387,7 +387,7 @@ public class Faculty {
                 // INSERT INTO FACULTY_FORM PARAMETERS (INT, STRING,STRING, INT, INT, INT, INT, S, S, S, S, S, S, I, I, I)
                 query = String.format("INSERT into faculty_form VALUES(%d, '%s', '%s', %d, %d, %d, %d, '%s', '%s', " +
                                 "'%s', '%s', '%s', '%s', %d, %d, %d)", year, term, id, numberOfCourses, priority[0], priority[1], priority[2],
-                        summer_choice, "N/A", "N/A", time_of_day[0],time_of_day[1],time_of_day[2],
+                        summer_choice, null, null, time_of_day[0],time_of_day[1],time_of_day[2],
                         0, 0, 0);
                 PreparedStatement stmt = null;
                 try {
