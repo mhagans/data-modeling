@@ -1,8 +1,9 @@
 
 package DM;
 
-import java.util.Scanner;
 import DM.LoginServices.AccessLevel;
+
+import java.util.Scanner;
 
 public class AdminMenu
 {
@@ -17,6 +18,8 @@ public class AdminMenu
     private enum Action {
         CREATE_USER, VIEW_REPORTS, EXIT
     }
+
+
 
     public void run()
     {
@@ -35,10 +38,10 @@ public class AdminMenu
             switch (input)
             {
                 case 1:
-                  //  createUser(AccessLevel.FACULTY);
+                    createUser(AccessLevel.FACULTY);
                     break;
                 case 2:
-                    //createUser(AccessLevel.ADMIN);
+                    createUser(AccessLevel.ADMIN);
                     break;
                 case 3:
                     new Report();
@@ -72,6 +75,6 @@ public class AdminMenu
         
         String areaOfExpertise = in.next();
 
-        //LoginServices.createUser(username, password, name, areaOfExpertise, accessLevel);
+       LoginServices.createUser(username, password, name, areaOfExpertise, accessLevel);
     }
 }

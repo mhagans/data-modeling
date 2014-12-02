@@ -61,7 +61,6 @@ public class Report {
                 case 2:
                     DL();
                     break;
-<<<<<<< HEAD:DM/Report.java
                 case 3:
                     //TL();
                     break;
@@ -70,17 +69,6 @@ public class Report {
                     break;
                 case 5:
                     //FL();
-=======
-                case "3":
-                    TL();
-                    break;
-                case "4":
-                    SL();
-                    break;
-                case "5":
-                    FL();
->>>>>>> ccd67cf3bd48398299da9bb78d433f90519e80bf:Report.java
-                    break;
                 case 6:
                     break display;
                 default:

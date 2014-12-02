@@ -1,6 +1,8 @@
 
 package DM;
 
+import DM.LoginServices.AccessLevel;
+
 import java.util.Scanner;
 
 public class MainMenu {
@@ -19,13 +21,13 @@ public class MainMenu {
                 case 1:
                     break;
                 case 2:
-					if((user = LoginServices.login(AccessLevel.FACULTY) != null))
+					if((user = LoginServices.login(AccessLevel.FACULTY)) != null)
 					{
-						new Faculty();
+						new Faculty(user);
 					}
                     break;
                 case 3:
-					if((user = LoginServices.login(AccessLevel.ADMIN) != null))
+					if((user = LoginServices.login(AccessLevel.ADMIN)) != null)
 					{
 						new AdminMenu();
 					}

@@ -35,7 +35,7 @@ public class LoginServices
         {
             Connection connection = ConnectDB.getConn();
             PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO id (id, name, degree, password, Permission) values ? ? ? ? ?");
+                    "INSERT INTO id (id, name, degree, password, Permission) values (?, ?, ?, ?, ?)");
             statement.setString(1, username);
             statement.setString(2, name);
             statement.setString(3, degree);
