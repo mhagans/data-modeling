@@ -1,25 +1,58 @@
 package DM;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 //Students have IDs, names, degrees, semester + year, availible courses, preffered days?
 public class Student {
 
-	private int ID;
+	private String ID;
 	private String name;
 	private String degree;
 	private String year;
 	private String times;
 	private String days;
+	private String term;
 	private ArrayList courses;
 	
 		
-	public int getID(){
+	Student(String id){				//populate with data from the other table
+	Statement stmt = null;
+   	String queryid = "SELECT year, term, id FROM Student_Form WHERE id = " + id;   
+	Connection conn = ConnectDB.getConn();
+	try{			
+			stmt = conn.createStatement();	
+			ResultSet rs = stmt.executeQuery(queryid);
+			while (rs.next()) {
+				setYear(rs.getString("year"));
+				setTerm(rs.getString("term"));
+				setDays(rs.getString("days"));
+				setTimes(rs.getString("time"));				
+			}
+			
+	}
+	catch (SQLException e ) {
+        e.printStackTrace();
+    } finally {
+        if (stmt != null) { try {
+			stmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+				e.printStackTrace();
+				} 
+        	}
+    	}
+	}
+	
+	public String getID(){
 		return(ID);
 	}
 	
-	public void setID(int x){
-		ID = x;
+	public void setID(String studentid){
+		ID = studentid;
 	}
 	
 	public String getName(){
@@ -39,7 +72,7 @@ public class Student {
 	}
 	
 	public String getYear(){
-		return(semesteryear);
+		return(year);
 	}
 	
 	public void setYear(String x){
@@ -59,6 +92,14 @@ public class Student {
 	
 	public String getDays(){
 		return(days);
+	}
+	
+	public void setTerm(String x){
+		term = x;
+	}
+	
+	public String getTerm(){
+		return(term);
 	}
 	
 }

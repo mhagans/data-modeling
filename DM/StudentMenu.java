@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Scanner;
 
 //Student menu; gets list of students, displays students allows a student to be selected, allows a student to be created
@@ -14,63 +15,33 @@ public class StudentMenu {
 	private String userName="teama1dm2f14";//oracle account user name goes here
     private String password="team1bcchlrt";//password goes here
     private String url="jdbc:oracle:thin:@olympia.unfcsd.unf.edu:1521:dworcl";
-    private Connection conn;
-    private Hashtable<String, student> studenttable;
+    private Hashtable<String, Student> studenttable;
     
-    private void openDBcon(){	 
-    	try{
-    		DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-    		//Can use either one need to test which will work. The one below was the one we used in SE
-    		//Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
-    		conn=DriverManager.getConnection(url, userName, password);
-    		System.out.println("Connected to DB");
-         
-    	}
-    	catch (Exception ie) {
-    		if (ie.getMessage().equals("IO Error: The Network Adapter could not establish the connection")) {
-    			System.out.println("Error The network adapter could not establish the connection\n"
-    					+ "Make sure you are connected to the unf campus internet either locally or through a VPN"
-    					+ "\nSee the unf support page for info on VPNing into the campus internet");
-         } 
-    		else {
-    			System.out.println(ie.getMessage());
-         }
-    	}
-	}
-    
-    private void closeDBcon(){
-    	try {
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
-    
+       
     //Constructor builds and populates linked list of student objects
     StudentMenu(){
     	Statement stmt = null;
-    	String query = "SELECT * FROM id WHERE Permission = 0";
-    	
-    	LinkIterator iterator = new LinkIterator();
+    	String queryid = "SELECT * FROM id WHERE Permission = 0";   	
     	
     	try{
-    		openDBcon();						//Open the DB connection
-    		stmt = conn.createStatement();	
-    		 ResultSet rs = stmt.executeQuery(query);
+    	Connection conn = ConnectDB.getConn();
+    	stmt = conn.createStatement();	
+		ResultSet rs = stmt.executeQuery(queryid);
+    	
     		 
-    		studenttable = new Hashtable<String, Student>();
+    		studenttable = new Hashtable();
     		 while (rs.next()) {
-    			 Student student = new Student();					//make a student
-    			 studentid = rs.getString("id");					//get attributes and put them in student
+    			 
+    			 String studentid = rs.getString("id");					//grab id
+    			 Student student = new Student(studentid);					//make a student
     			 student.setID(studentid);
     			 student.setName(rs.getString("name"));    			 
     			 student.setDegree(rs.getString("degree"));    			 
-    			 studenttable(studentid, student);					//put student object in hashtable		 
+    			 studenttable.put(studentid, student);					//put student object in hashtable		 
     			 
     			
     		 }
-    		 closeDBcon();					//close DB connection
+    		 								//close DB connection
     		 
     		 displayStudentMenu();			//display stuff
     		
@@ -100,7 +71,8 @@ public class StudentMenu {
     		System.out.println("Student Name: " + stud.getName() + "\n");
     		System.out.println("Student Degree: " + stud.getDegree() + "\n");
     		System.out.println("Student Year: " + stud.getYear() + "\n");
-    		System.out.println("Student Preffered Days: " stud.getDays() + "\n");
+    		System.out.println("Student Term: " + stud.getTerm() + "\n");
+    		System.out.println("Student Preffered Days: " + stud.getDays() + "\n");
     		System.out.println("Student Preffered Times: " + stud.getTimes() + "\n");
     		//a thing for classes
     	}
@@ -111,7 +83,54 @@ public class StudentMenu {
     	}
     	
     }
-   private createStudent(){
-	   //put a student in the db
+   private void createStudent(){
+	   Scanner reader = new Scanner(System.in);	   
+	   
+	   System.out.println("Student ID: ");
+	   String id = reader.next();
+	   while(studenttable.get(id) != null){
+		   System.out.println("\nThat ID is taken, select a different ID: ");
+		   id = reader.next();
+	   }
+	   
+	   	System.out.println("Student Name: ");
+	   	String name = reader.next();
+		System.out.println("Student Degree: ");
+		String degree = reader.next();
+		System.out.println("Student Year: ");
+		int year = reader.nextInt();
+		System.out.println("Student Term: ");
+		String term = reader.next();
+		System.out.println("Student Preffered Days: ");
+		String prefdays = reader.next();
+		System.out.println("Student Preffered Times: ");
+		String preftimes = reader.next();
+		
+		Statement stmt = null;
+		
+		 String queryid = String.format("INSERT INTO id (id, name, degree, Permission) values %s %s %s  %i;",
+                 id, name, degree, 0);
+		 String querystud = String.format("INSERT INTO Student_Form (id, year, term, day, time) values %s %s %s %s %s;",
+                 id, year, term, prefdays, preftimes);
+		 	
+		 
+		 try{
+		    	Connection conn = ConnectDB.getConn();
+		    	stmt = conn.createStatement();	
+				stmt.executeQuery(queryid);
+				stmt.executeQuery(querystud);
+		 }
+		 
+		 catch (SQLException e ) {
+	            e.printStackTrace();
+	        } finally {
+	            if (stmt != null) { try {
+					stmt.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+	          }
+	        }
    }
 }
