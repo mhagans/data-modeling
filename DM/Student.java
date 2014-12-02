@@ -15,9 +15,7 @@ public class Student {
 	private String year;
 	private String times;
 	private String days;
-	private String term;
-	private ArrayList courses;
-	
+	private String term;	
 		
 	Student(String id){				//populate with data from the other table
 	Statement stmt = null;
