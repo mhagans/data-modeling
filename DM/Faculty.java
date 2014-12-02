@@ -236,7 +236,7 @@ public class Faculty {
                         e.printStackTrace();
                     }
                     //Insert into the course _ form ID, Year, Term, Course_number, ranking
-                    query = "INSERT into form_course VALUES (" + i + ", '" + year + "', '" + term + "', '" + courseNumber + "', " + ranking + ")";
+                    query = "INSERT into form_course VALUES (" + id + ", '" + year + "', '" + term + "', '" + courseNumber + "', " + ranking + ")";
                     try {
                         stmt = conn.prepareStatement(query);
                         stmt.executeUpdate();
