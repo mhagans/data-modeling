@@ -7,6 +7,7 @@ public class MainMenu {
     public MainMenu(){
         Scanner r=new Scanner(System.in);
         int uin=0;
+		String user = null;
         while (uin != 4) {
             System.out.println("Main Menu\n"
                     + "1) Student Menu\n"
@@ -18,10 +19,16 @@ public class MainMenu {
                 case 1:
                     break;
                 case 2:
-                    new Faculty();
+					if((user = LoginSevices.login(AccessLevel.FACULTY) != null)
+					{
+						new Faculty();
+					}
                     break;
                 case 3:
-                    new AdminMenu();
+					if((user = LoginSevices.login(AccessLevel.ADMIN) != null)
+					{
+						new AdminMenu();
+					}
                     break;
                 case 4:
                     System.exit(1);
