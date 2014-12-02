@@ -29,6 +29,7 @@ public class ConnectDB{
         try{
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             conn=DriverManager.getConnection(url, userName, password);
+            System.out.println("Connected");
             return conn;
         }
         catch (Exception ie) {
