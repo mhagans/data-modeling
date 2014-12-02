@@ -17,14 +17,13 @@ public class AdminMenu
     private enum Action {
         CREATE_USER, VIEW_REPORTS, EXIT
     }
-
-    public void run()
-    {
+    
+    public AdminMenu(){
         in = new Scanner(System.in);
 
         int input = 0;
 
-        display: while (input != 4)
+        display: while (true)
         {
             System.out.println("Admin Menu\n"
                     + "1) Create Faculty Accoun\n"
@@ -35,10 +34,10 @@ public class AdminMenu
             switch (input)
             {
                 case 1:
-                  //  createUser(AccessLevel.FACULTY);
+                    createUser(AccessLevel.FACULTY);
                     break;
                 case 2:
-                    //createUser(AccessLevel.ADMIN);
+                    createUser(AccessLevel.ADMIN);
                     break;
                 case 3:
                     new Report();
@@ -49,6 +48,11 @@ public class AdminMenu
                     System.out.println("Bad input: please enter a number between 1-4");
             }
         }
+    }
+
+    public void run()
+    {
+        
     }
 
     private void createUser(AccessLevel accessLevel)
