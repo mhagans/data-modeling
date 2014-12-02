@@ -96,8 +96,9 @@ public class LoginServices
             {
                 PreparedStatement statement = conn.prepareStatement("SELECT id, Permission FROM id WHERE id = ?");
                 statement.setString(1, username);
+                System.out.println(username);
                 ResultSet resultSet = statement.executeQuery();
-
+                resultSet.next();
                 if(resultSet.getString("id") != null) //Username found in database
                 {
                     if(resultSet.getInt("Permission") == accessLevel.ordinal()) //User has appropriate access level.
@@ -243,7 +244,7 @@ public class LoginServices
      * @param password Password to encrypt.
      * @return Encrypted hash of given password.
      */
-    private static String encryptPassword(String password)
+    public static String encryptPassword(String password)
     {
         try
         {
