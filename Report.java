@@ -149,7 +149,7 @@ public class Report {
                         System.out.println(year);
                         sig=year;
                     }
-                    rank = fcs.getInt("rank");
+                    rank = fcs.getInt("ranking");
                     //get faculty info
                     it=conn.prepareStatement(IdQ);
                     it.setString(1, id);
@@ -291,7 +291,7 @@ public class Report {
                     while (fcs.next()) {
                         id = fcs.getString("id");
                         year = fcs.getInt("year");
-                        rank = fcs.getInt("rank");
+                        rank = fcs.getInt("ranking");
 
                         it=conn.prepareStatement(IdQ);
                         it.setString(1, id);
@@ -456,7 +456,7 @@ public class Report {
                     while (fcs.next()) {
                         id = fcs.getString("id");
                         year = fcs.getInt("year");
-                        rank = fcs.getInt("rank");
+                        rank = fcs.getInt("ranking");
 
                         it=conn.prepareStatement(IdQ);
                         it.setString(1, id);
@@ -766,7 +766,7 @@ public class Report {
                     System.out.println("Courses: ");
                     while(cs.next()){
                         cn=cs.getString("course_number");
-                        rank=cs.getInt("rank");
+                        rank=cs.getInt("ranking");
                         System.out.println(cn+" ranking: (1-5) "+rank);
                         sct=conn.prepareStatement(CourSQ);
                         sct.setString(1, cn);
