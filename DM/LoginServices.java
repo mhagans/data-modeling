@@ -33,12 +33,15 @@ public class LoginServices
         //TODO: Major refactoring
         try
         {
-            String query = String.format("INSERT INTO id (id, name, degree, password, Permission) values %s %s %s %s %i;",
-                    username, name, degree, password, accessLevel.ordinal());
-
             Connection connection = ConnectDB.getConn();
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
+            PreparedStatement statement = connection.prepareStatement(
+                    "INSERT INTO id (id, name, degree, password, Permission) values ? ? ? ? ?");
+            statement.setString(1, username);
+            statement.setString(2, name);
+            statement.setString(3, degree);
+            statement.setString(4, encryptPassword(password));
+            statement.setInt(5, accessLevel.ordinal());
+            statement.execute();
             System.out.println("User was created successfully");
 
             connection.close();
@@ -55,7 +58,7 @@ public class LoginServices
      * @param accessLevel Access level requested.
      * @return Returns username if successful, otherwise null.
      */
-    private static String login(AccessLevel accessLevel)
+    public static String login(AccessLevel accessLevel)
     {
         String username = getUsername(accessLevel);
         if(username == null)
@@ -196,7 +199,7 @@ public class LoginServices
      * @param username Unique ID of user requesting to update password.
      * @return Boolean representing success of update request.
      */
-    private static boolean updatePassword(String username)
+    public static boolean updatePassword(String username)
     {
         //Request new password
         Scanner input = new Scanner(System.in);
@@ -214,7 +217,7 @@ public class LoginServices
                 {
                     statement.setString(1, encryptPassword(newPassword));
                     statement.setString(2, username);
-                    statement.executeUpdate();
+                    statement.execute();
                 }
                 catch(Exception e)
                 {
