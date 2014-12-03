@@ -36,6 +36,8 @@ public class Student {
 				sform.setID(id);
 				forms.add(sform);
 			}
+			  stmt.close();
+			  rs.close();
 			forms.trimToSize();
 			
 	}

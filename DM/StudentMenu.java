@@ -31,6 +31,8 @@ public class StudentMenu {
     			 student.setDegree(rs.getString("degree"));    			 
     			 studenttable.put(studentid, student);					//put student object in hashtable	   			
     		 }    		 
+    		  stmt.close();
+    		  rs.close();
     		 displayStudentMenu();			//display stuff  		
     	}    	
     	catch (SQLException e ) {
@@ -43,7 +45,9 @@ public class StudentMenu {
 				e.printStackTrace();
 				} 
           }
+          
         }
+    	
     }    
     public void displayStudentMenu(){
     	System.out.println("Listed Students: ");
@@ -139,6 +143,7 @@ public class StudentMenu {
 		    	stmt = conn.createStatement();					
 				stmt.executeQuery(querystud);
 				System.out.println("\nStudent form added");
+				stmt.close();
 		 }		 
 		 catch (SQLException e ) {
 	            e.printStackTrace();
@@ -242,7 +247,8 @@ public class StudentMenu {
 	    			n++;
 	    		 }
 	    		 System.out.println("--------------------------");
-	    				 		
+	    		 rs.close();
+	    		 stmt.close();
 	    	}    	
 	    	catch (SQLException e ) {
 	            e.printStackTrace();
@@ -288,6 +294,8 @@ public class StudentMenu {
 	        		s.forms.get(selection).getID(), s.forms.get(selection).getYear(), s.forms.get(selection).getTerm(), input, 0);
 	        	try {
 	        		stmt.executeQuery(enrollquery);
+	        		 rs.close();
+		    		 stmt.close();
 	        	}
 	        	catch (SQLException e ) {
 		            e.printStackTrace();
