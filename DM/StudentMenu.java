@@ -94,10 +94,9 @@ public class StudentMenu {
 	   	System.out.println("\nStudent Name: ");
 	   	String name = reader.next();
 		System.out.println("\nStudent Degree: ");
-		String degree = reader.next();
-		String nullstring = "NULL";
+		String degree = reader.next();		
 		Statement stmt = null;		//INSERT INTO id (id, name, degree, Permission) values ('00624604', 'Clayton', 'cs', 0);
-		 String queryid = String.format("INSERT into id VALUES('%s', '%s', '%s', '%s', %d)", id, name, degree, nullstring, 0);
+		 String queryid = String.format("INSERT into id VALUES('%s', '%s', '%s', NULL, %d)", id, name, degree, 0);
 				 //"INSERT INTO id (id, name, degree, password, Permission) values (" + "'" + id + "', " + "'" + name + "', " + "'" + degree + "', " + "NULL, " + "'0'" + ");";
                  	 		 
 		 try{
