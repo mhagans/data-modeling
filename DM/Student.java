@@ -12,12 +12,11 @@ public class Student {
 	private String ID;
 	private String name;
 	private String degree;
-	private String year;
+	private int year;
 	private String times;
 	private String days;
 	private String term;
-	private ArrayList courses;
-	
+	public ArrayList<StudentForm> forms;
 		
 	Student(String id){				//populate with data from the other table
 	Statement stmt = null;
@@ -26,12 +25,14 @@ public class Student {
 	try{			
 			stmt = conn.createStatement();	
 			ResultSet rs = stmt.executeQuery(queryid);
+			StudentForm sform = new StudentForm();
 			while (rs.next()) {
-				setYear(rs.getString("year"));
+				setYear(rs.getInt("year"));
 				setTerm(rs.getString("term"));
 				setDays(rs.getString("day"));
 				setTimes(rs.getString("time"));				
 			}
+			
 			
 	}
 	catch (SQLException e ) {
@@ -46,6 +47,13 @@ public class Student {
         	}
     	}
 	}
+	
+	public void addStudentForm(StudentForm s){
+		forms.add(s);
+		forms.trimToSize();
+	}
+	
+	
 	
 	public String getID(){
 		return(ID);
@@ -71,11 +79,11 @@ public class Student {
 		degree = x;
 	}
 	
-	public String getYear(){
+	public int getYear(){
 		return(year);
 	}
 	
-	public void setYear(String x){
+	public void setYear(int x){
 		year = x;
 	}
 	

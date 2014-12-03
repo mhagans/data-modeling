@@ -1,5 +1,7 @@
 package DM;
 
+
+//create a new student form, students have forms
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -54,6 +56,7 @@ public class StudentMenu {
     	Scanner reader = new Scanner(System.in);    	
     	Student stud = studenttable.get(reader.next());			//pull student from table    	
     	if(stud != null){										//if it was found display attributes
+    		
     		System.out.println("Student ID: " + stud.getID() + "\n");													
     		System.out.println("Student Name: " + stud.getName() + "\n");
     		System.out.println("Student Degree: " + stud.getDegree() + "\n");
@@ -62,7 +65,22 @@ public class StudentMenu {
     		System.out.println("Student Prefered Days: " + stud.getDays() + "\n");
     		System.out.println("Student Prefered Times: " + stud.getTimes() + "\n");
     		//a thing for classes
+    		//show edit course listing        	
+        	System.out.println("Edit/View courses for this student? (y/n)\n");
+            String input = reader.next();
+            if((input.toLowerCase().equals("y")) || (input.toLowerCase().equals("yes"))){
+            	//go to dispclassmenu method
+            	displayStudentClasses(stud);
+            }
+            else if((input.toLowerCase().equals("n")) || (input.toLowerCase().equals("no"))){
+            	System.out.println("exiting \n");
+            }
+            else{
+            	System.out.println("nooo");
+            }
     	}
+    	
+    	
     	
     	else{
     		System.out.println("student not found, create new student? \n");		//go to create student method if not found   
@@ -76,7 +94,7 @@ public class StudentMenu {
 	   while(studenttable.get(id) != null){
 		   System.out.println("\nThat ID is taken, select a different ID: ");
 		   id = reader.next();
-	   }	   
+	   }	    
 	   	System.out.println("\nStudent Name: ");
 	   	String name = reader.next();
 		System.out.println("\nStudent Degree: ");
@@ -90,9 +108,9 @@ public class StudentMenu {
 		System.out.println("\nStudent Prefered Times (morning, afternoon, evening): ");
 		String preftimes = reader.next();		
 		Statement stmt = null;		
-		 String queryid = String.format("INSERT INTO id (id, name, degree, Permission) values %s %s %s  %i;",
+		 String queryid = String.format("INSERT INTO id (id, name, degree, Permission) values %s %s %s  %d;",
                  id, name, degree, 0);
-		 String querystud = String.format("INSERT INTO Student_Form (id, year, term, day, time) values %s %s %s %s %s;",
+		 String querystud = String.format("INSERT INTO Student_Form (id, year, term, day, time) values %s %d %s %s %s;",
                  id, year, term, prefdays, preftimes);		 
 		 try{
 		    	Connection conn = ConnectDB.getConn();
@@ -113,4 +131,154 @@ public class StudentMenu {
 	          }
 	        }
    }
-}
+   
+   private void createStudentForm(){
+	   StudentForm s = new StudentForm();
+	   
+   }
+   
+   private void displayStudentClasses(Student stud){
+	  
+	  boolean exit = true;
+	  while(exit){
+	  System.out.println("Student class menu for " + stud.getName() + "\n");
+	  System.out.println("1. View enrolled courses\n");
+	  System.out.println("2. See available courses\n");
+	  System.out.println("3. Enroll in a course\n");
+	  System.out.println("4. Create New Form\n");
+	  System.out.println("5. Exit");
+	  Scanner reader = new Scanner(System.in);
+	  int selection = reader.nextInt();
+	  
+	  switch (selection){
+	  case 1:	viewEnrolled(stud); 
+		  break;
+	  case 2: 	showAvailable(stud);
+		  break;
+	  case 3: 	showEnroll(stud);
+		  break;
+	  case 4:   createStudentForm();
+	  	  break;
+	  case 5:   exit = false;
+		  break;
+	  }
+	  
+	  }
+	  }
+	  
+	  private void viewEnrolled(Student s){
+		  System.out.println("Select a form");
+		  for(int i = 0;i<=s.forms.size();i++){
+			  System.out.println(s.forms.get(i).getTerm() + " " + s.forms.get(i).getYear());
+		  }
+		  Statement stmt = null;
+	    	String query = "SELECT * FROM Form_Course WHERE id = " + s.getID();   	   	
+	    	try{    		
+	    	Connection conn = ConnectDB.getConn();    	
+	    	stmt = conn.createStatement();	
+			ResultSet rs = stmt.executeQuery(query); 
+			int n = 1;
+	    		 while (rs.next()) {    			 
+	    			System.out.println(n + ". " + rs.getString("course_number") + "\n");
+	    			n++;
+	    		 }   
+	    	}    	
+	    	catch (SQLException e ) {
+	            e.printStackTrace();
+	        } finally {
+	            if (stmt != null) { try {
+					stmt.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					} 
+	          }
+	        }
+	  }
+	  
+	  private void showAvailable(Student s){
+		  System.out.println("Select a form");
+		  for(int i = 0;i<=s.forms.size();i++){
+			  System.out.println(s.forms.get(i).getTerm() + " " + s.forms.get(i).getYear());
+		  }
+		  Statement stmt = null;
+	    	String query = "SELECT * FROM Course WHERE term = " + s.getTerm();   	   	
+	    	try{    		
+	    	Connection conn = ConnectDB.getConn();    	
+	    	stmt = conn.createStatement();	
+			ResultSet rs = stmt.executeQuery(query); 
+			int n = 1;
+	    		 while (rs.next()) {    			 
+	    			System.out.println(n + ". " + rs.getString("course_number") + " " + rs.getString("name") + "\n");
+	    			n++;
+	    		 }    		 
+	    				 		
+	    	}    	
+	    	catch (SQLException e ) {
+	            e.printStackTrace();
+	        } finally {
+	            if (stmt != null) { try {
+					stmt.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					} 
+	          }
+	        }
+	  }
+	  
+	  private void showEnroll(Student s){
+		  System.out.println("Select a form");
+		  for(int i = 0;i<=s.forms.size();i++){
+			  System.out.println(s.forms.get(i).getTerm() + " " + s.forms.get(i).getYear());
+		  }
+		  Statement stmt = null;
+	    	String query = "SELECT * FROM Course WHERE term = " + s.getTerm();   	   	
+	    	try{    		
+	    	Connection conn = ConnectDB.getConn();    	
+	    	stmt = conn.createStatement();	
+			ResultSet rs = stmt.executeQuery(query); 
+			int n = 1;
+	    		 while (rs.next()) {    			 
+	    			 System.out.println(n + ". " + rs.getString("course_number") + " " + rs.getString("name") + "\n");
+	    			n++;
+	    		 }
+	    	System.out.println("Type in a CRN to enroll in that course or exit to exit: \n");
+	    	Scanner reader = new Scanner(System.in);
+	    	String input = reader.next();
+	        while(reader.next().toLowerCase() != "exit"){
+	        	String enrollquery = String.format("INSERT INTO Form_Course (id, year, term, course_number, ranking) values %s %d %s %s %d;",
+	                    s.getID(), s.getYear(), s.getTerm(), input, 0);
+	        	try {
+	        		stmt.executeQuery(enrollquery);
+	        	}
+	        	catch (SQLException e ) {
+		            e.printStackTrace();
+		        } finally {
+		            if (stmt != null) { try {
+						stmt.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						} 
+		          }
+		        }
+	        	
+	        }
+	    		 
+	    	}    	
+	    	catch (SQLException e ) {
+	            e.printStackTrace();
+	        } finally {
+	            if (stmt != null) { try {
+					stmt.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					} 
+	          }
+	        }
+	  }
+	  
+ }
+

@@ -23,34 +23,17 @@ public class MainMenu {
             uin = r.nextInt();
             switch (uin) {
                 case 1:
-                    /*String P=LoginServices.encryptPassword("teama1admin");
-                    String insertAdmin="insert into ID values (?, ?, ?, ?, ?)";
-                    Connection conn=ConnectDB.getConn();
-                    PreparedStatement ct;
-                    try{
-                        ct=conn.prepareStatement(insertAdmin);
-                        ct.setString(1,"12345678");
-                        ct.setString(2,"Admin");
-                        ct.setString(3,"CS");
-                        ct.setString(4,P);
-                        ct.setInt(5,2);
-                        ct.executeQuery();
-                    }
-                    catch(SQLException e){
-                        System.exit(1);
-                    }*/
+                    new StudentMenu();
                     break;
                 case 2:
-					if((user = LoginServices.login(AccessLevel.FACULTY)) != null)
-					{
-						new Faculty(user);
+                    if ((user = LoginServices.login(AccessLevel.FACULTY)) != null) {
+                        new Faculty(user);
                     }
                     break;
                 case 3:
-					if((user = LoginServices.login(AccessLevel.ADMIN)) != null)
-                {
-						new AdminMenu();
-                }
+                    if ((user = LoginServices.login(AccessLevel.ADMIN)) != null) {
+                        new AdminMenu();
+                    }
                     break;
                 case 4:
                     System.exit(1);
