@@ -38,6 +38,7 @@ public class Student {
 			}
 			  stmt.close();
 			  rs.close();
+			  conn.close();
 			forms.trimToSize();
 			
 	}
@@ -114,6 +115,11 @@ public class Student {
 	
 	public String getTerm(){
 		return(term);
+	}
+	
+	public void addForm(StudentForm s){
+		forms.add(s);
+		forms.trimToSize();
 	}
 	
 }

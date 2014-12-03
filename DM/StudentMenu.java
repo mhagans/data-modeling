@@ -33,6 +33,7 @@ public class StudentMenu {
     		 }    		 
     		  stmt.close();
     		  rs.close();
+    		  conn.close();
     		 displayStudentMenu();			//display stuff  		
     	}    	
     	catch (SQLException e ) {
@@ -56,7 +57,7 @@ public class StudentMenu {
     		System.out.println(e.nextElement());
     		System.out.println("\n");
     	}    	
-    	System.out.println("Please select a student ID: \n");
+    	System.out.println("Please select a student ID or type 'new' to create a new student: \n");
     	Scanner reader = new Scanner(System.in);    	
     	Student stud = studenttable.get(reader.next());			//pull student from table    	
     	if(stud != null){										//if it was found display attributes
@@ -81,7 +82,7 @@ public class StudentMenu {
     	
     	
     	else{
-    		System.out.println("student not found, create new student?(y/n)\n");		//go to create student method if not found   
+    		System.out.println("create new student?(y/n)\n");		//go to create student method if not found   
     		String select = reader.next();
     		if(select.toLowerCase().equals("y") || select.toLowerCase().equals("yes"))
     		createStudent();
@@ -100,16 +101,17 @@ public class StudentMenu {
 		System.out.println("\nStudent Degree: ");
 		String degree = reader.next();		
 		Statement stmt = null;		//INSERT INTO id (id, name, degree, Permission) values ('00624604', 'Clayton', 'cs', 0);
-		 String queryid = String.format("INSERT into id VALUES('%s', '%s', '%s', NULL, %d)", id, name, degree, 0);
-				 //"INSERT INTO id (id, name, degree, password, Permission) values (" + "'" + id + "', " + "'" + name + "', " + "'" + degree + "', " + "NULL, " + "'0'" + ");";
-                 	 		 
-		 try{
-		    	Connection conn = ConnectDB.getConn();
-		    	stmt = conn.createStatement();	
-				stmt.executeUpdate(queryid);		
-				stmt.close();
-				System.out.println("\nStudent added");
-		 }		 
+		String queryid = String.format("insert into id values ('%s', '%s', '%s', '%s', %d)", id, name, degree,null, 0);
+		//"INSERT INTO id (id, name, degree, password, Permission) values (" + "'" + id + "', " + "'" + name + "', " + "'" + degree + "', " + "NULL, " + "'0'" + ");";
+		                System.out.println(queryid);
+		try{
+		    Connection conn = ConnectDB.getConn();
+		    stmt = conn.createStatement();
+		stmt.executeUpdate(queryid);
+		stmt.close();
+		System.out.println("\nStudent added");
+		conn.close();
+		} 	 
 		 catch (SQLException e ) {
 	            e.printStackTrace();
 	        } finally {
@@ -134,9 +136,16 @@ public class StudentMenu {
 	   System.out.println("Select prefered times (morning, afternoon, evening): ");
 	   String times = reader.next();
 	   
+	   StudentForm sform = new StudentForm();
+	   sform.setID(s.getID());
+	   sform.setYear(year);
+	   sform.setTerm(term);
+	   sform.setDays(days);
+	   sform.setTimes(times);
+	   s.addForm(sform);
 	   Statement stmt = null;	
 	   
-	   String querystud = String.format("INSERT INTO Student_Form (id, year, term, day, time) values %s %d %s %s %s;",
+	   String querystud = String.format("insert into Student_Form (id, year, term, day, time) values ('%s', %d, '%s', '%s', '%s')",
                s.getID(), year, term, days, times);		 
 		 try{
 		    	Connection conn = ConnectDB.getConn();
@@ -144,6 +153,7 @@ public class StudentMenu {
 				stmt.executeQuery(querystud);
 				System.out.println("\nStudent form added");
 				stmt.close();
+				
 		 }		 
 		 catch (SQLException e ) {
 	            e.printStackTrace();
@@ -192,10 +202,12 @@ public class StudentMenu {
 		  System.out.println("Select a form");
 		  if(s.forms.size()>0){
 		  for(int i = 0;i<s.forms.size();i++){
-			  System.out.println(s.forms.get(i).getTerm() + " " + s.forms.get(i).getYear());
+			  System.out.println(i + ". " + s.forms.get(i).getTerm() + " " + s.forms.get(i).getYear());
 		  }
+		  Scanner reader = new Scanner(System.in);
+		  int selection = reader.nextInt();
 		  Statement stmt = null;
-	    	String query = "SELECT * FROM Form_Course WHERE id = " + s.getID();   	   	
+	    	String query = "SELECT * FROM Form_Course WHERE id = " + s.getID() + "AND term = " + "'" + s.forms.get(selection).getTerm().toLowerCase() + "'";   	   	
 	    	try{    		
 	    	Connection conn = ConnectDB.getConn();    	
 	    	stmt = conn.createStatement();	
@@ -290,7 +302,7 @@ public class StudentMenu {
 	    	
 	    	String input = reader.next();
 	    	
-	        String enrollquery = String.format("INSERT INTO Form_Course (id, year, term, course_number, ranking) values '%s' %d '%s' '%s' %d;",
+	        String enrollquery = String.format("insert into Form_Course (id, year, term, course_number, ranking) values ('%s', %d, '%s', '%s', %d)",
 	        		s.forms.get(selection).getID(), s.forms.get(selection).getYear(), s.forms.get(selection).getTerm(), input, 0);
 	        	try {
 	        		stmt.executeQuery(enrollquery);
