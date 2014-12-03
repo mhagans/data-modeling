@@ -24,7 +24,6 @@ public class Faculty {
         int nextYear = year+1;
         int isEven = 0;
         String term = null;
-        String term2= null;
         int courseRelease = 0;
         int sabbatical = 0;
         int profDevelopment = 0;
@@ -130,7 +129,6 @@ public class Faculty {
                   term = "Invalid Selection";
                   break;
               }
-            //endregion
               System.out.println("Select an option \n" +
                                    "1) Create new report\n"+
                                    "2) View previous reports\n"+
@@ -143,31 +141,28 @@ public class Faculty {
                           case 1:
                             break;
                           case 2:
-                            ResultSet rs = stmt.executeQuery("SELECT year,term,day_1,day_2,day_3,time_1,time_2,time_3 from faculty_form WHERE id='"+id+"'");
+                            ResultSet rs = stmt.executeQuery("SELECT year,term,day_1,day_2,time_1,time_2 from faculty_form WHERE id='"+id+"'");
                             while(rs.next())
                             {
                               System.out.println("Year: "+rs.getInt(1));
                               System.out.println("Term: "+rs.getString(2));
                               System.out.println("Day 1 preference: "+rs.getString(3));
                               System.out.println("Day 2 preference: "+rs.getString(4));
-                              System.out.println("Day 3 preference: "+rs.getString(5));
-                              System.out.println("Time 1 preference: "+rs.getString(6));
-                              System.out.println("Time 2 preference: "+rs.getString(7));
-                              System.out.println("Time 2 preference: "+rs.getString(8));
+                              System.out.println("Time 1 preference: "+rs.getString(5));
+                              System.out.println("Time 2 preference: "+rs.getString(6)+"\n");            
                             }
                             break display;
                           case 3:
                             stmt.executeUpdate("DELETE from faculty_form WHERE id='"+id+"' AND term='"+term+"'");
                             System.out.println("This term's form has been deleted");
-                            break display;
+                            break;
                           default:
-                            System.out.println("Invalid Selection");
+                            System.out.println("Invalid Report Selection");
                             break;
                       }
                    } catch (Exception e) {
-                       System.out.println("Invalid Selection");
+                       System.out.println("Invalid Option Selection");
                    }
-                //region Fall Course Load
                 if(!isSummer) {
                   System.out.println("Enter Yes or No if Course Release is Expected.\n");
                   br = new BufferedReader(new InputStreamReader(System.in));
@@ -211,7 +206,6 @@ public class Faculty {
                       System.out.println("IO error trying to read selection: " + e);
                   }
                }
-                //region Scheduling Factors Importance Rank Order(1-3)
                 System.out.println("Rank Your Scheduling Factors Importance by rank order 1-3 with 1 being the highest");
                 int count = 0;
                 String prefTitle = null;
@@ -237,9 +231,6 @@ public class Faculty {
                     count++;
 
                 }
-                //endregion
-
-                //region Fall/Spring Number of Course's Code
                 System.out.println("Enter the number of courses to teach for " + term + " semester.\n");
                 br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -253,8 +244,7 @@ public class Faculty {
                 // Loop to iterate through the courses
                 for(int i = 0; i < numberOfCourses; i++){
                     // query to populate Course list
-                    //conn = ConnectDB.getConn();
-                    query = "SELECT course_number, name from COURSE WHERE term = '" + term + "' AND iseven = " + isEven + " ORDER BY course_number";
+                    query = "SELECT course_number, name from COURSE WHERE term = '" + term + "' ORDER BY course_number";
                     Statement stmt = null;
                     ResultSet rs = null;
                     try {
@@ -280,7 +270,7 @@ public class Faculty {
                     try {
                         courseNumber = courseList.get(Integer.parseInt(br.readLine())).course_number;
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        System.out.println(e);
                     }
                     System.out.printf("Rank the course from 1-%d\n", numberOfCourses);
                     br = new BufferedReader(new InputStreamReader(System.in));
@@ -304,8 +294,24 @@ public class Faculty {
                     }
                     
                     if(num > 0) {
-                      System.out.println("Form already exists for this term");
-                      System.exit(1);
+                      System.out.println("Form already exists for this term\n");
+                      br = new BufferedReader(new InputStreamReader(System.in));
+                      System.out.println("Would you like to remove your current form?\n"+
+                              "1) Yes\n"+
+                              "2) No\n");
+                      try{
+                      if(br.readLine().equalsIgnoreCase("yes")) {
+                        stmt.executeUpdate("DELETE from faculty_form WHERE id='"+id+"' AND term='"+term+"'");
+                        stmt.executeUpdate("DELETE from form_course WHERE id='"+id+"' AND term='"+term+"' AND course_number ='"+courseNumber+"'");
+                      }
+                        stmt.close();
+                        }
+                      catch (SQLException e) {
+                        System.out.println("SQL error occured "+e);
+                      }
+                      catch (IOException e) {
+                        System.out.println("IO error occured "+e);
+                      }
                     }
                     
                     //Insert into the course _ form ID, Year, Term, Course_number, ranking
@@ -320,8 +326,6 @@ public class Faculty {
                     }
 
                 }
-                //endregion
-                // region Time Preference
                 System.out.println("Rank Your Time of Day Preference by rank order 1-3 with 1 being the highest.");
                 count = 0;
                 prefTitle = null;
@@ -353,7 +357,6 @@ public class Faculty {
                     count++;
 
                 }
-                //endregion
                 if(isSummer) {
                 Boolean valid = false;
                 choice = 0;
@@ -442,7 +445,6 @@ public class Faculty {
                     }
                 }while(!valid);
              }
-                //region Fall and Spring Days of Week Preference Rank Order
                 System.out.println("Rank Your Days of the Week Preference by rank order 1-3 with 1 being the highest.");
                 count = 0;
                 prefTitle = null;
@@ -475,10 +477,6 @@ public class Faculty {
                     count++;
 
                 }
-                //endregion
-
-                //region Fall/Spring Insert into the faculty_form table
-                //conn = ConnectDB.getConn();
                 if(!isSummer) {
                 // INSERT INTO FACULTY_FORM PARAMETERS (INT, STRING,STRING, INT, INT, INT, INT, S, S, S, S, S, S, I, I, I)
                 query = String.format("INSERT into faculty_form VALUES(%d, '%s', '%s', %d, %d, %d, %d, '%s', '%s', " +
@@ -501,7 +499,6 @@ public class Faculty {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                //endregion
             }
         }
     }
