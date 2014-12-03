@@ -143,15 +143,17 @@ public class Faculty {
                           case 1:
                             break;
                           case 2:
-                            ResultSet rs = stmt.executeQuery("SELECT year,term,day_1,day_2,time_1,time_2 from faculty_form WHERE id='"+id+"'");
+                            ResultSet rs = stmt.executeQuery("SELECT year,term,day_1,day_2,day_3,time_1,time_2,time_3 from faculty_form WHERE id='"+id+"'");
                             while(rs.next())
                             {
                               System.out.println("Year: "+rs.getInt(1));
                               System.out.println("Term: "+rs.getString(2));
                               System.out.println("Day 1 preference: "+rs.getString(3));
                               System.out.println("Day 2 preference: "+rs.getString(4));
-                              System.out.println("Time 1 preference: "+rs.getString(5));
-                              System.out.println("Time 2 preference: "+rs.getString(6)+"\n");            
+                              System.out.println("Day 3 preference: "+rs.getString(5));
+                              System.out.println("Time 1 preference: "+rs.getString(6));
+                              System.out.println("Time 2 preference: "+rs.getString(7));
+                              System.out.println("Time 2 preference: "+rs.getString(8));
                             }
                             break display;
                           case 3:
