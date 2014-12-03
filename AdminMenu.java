@@ -35,10 +35,10 @@ public class AdminMenu
             switch (input)
             {
                 case 1:
-                  //  createUser(AccessLevel.FACULTY);
+                    createUser(AccessLevel.FACULTY);
                     break;
                 case 2:
-                    //createUser(AccessLevel.ADMIN);
+                    createUser(AccessLevel.ADMIN);
                     break;
                 case 3:
                     new Report();
@@ -72,6 +72,6 @@ public class AdminMenu
         
         String areaOfExpertise = in.next();
 
-        //LoginServices.createUser(username, password, name, areaOfExpertise, accessLevel);
+        LoginServices.createUser(username, password, name, areaOfExpertise, accessLevel);
     }
 }
