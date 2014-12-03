@@ -16,11 +16,7 @@ public class LoginServices
     private static final String salt = "&y81*d5jp8dn4n0@-$u-_)w30+j9*lksh)r$c&2v(bu#%$8!2t";
     public enum AccessLevel
     {
-<<<<<<< HEAD
-        FACULTY, ADMIN
-=======
-        //FACULTY = 1, ADMIN
->>>>>>> dd72e5daea7031383ff441ac18817a2ca5d9d640
+        STUDENT, FACULTY, ADMIN
     }
 
     /**
@@ -32,33 +28,20 @@ public class LoginServices
      * @param password Password for new user.
      * @param accessLevel Access level for new user.
      */
-<<<<<<< HEAD
     public static void createUser(String username, String name, String degree, String password, AccessLevel accessLevel)
     {
         //TODO: Major refactoring
         try
         {
-            String query = String.format("INSERT INTO id (id, name, degree, password, Permission) values %s %s %s %s %i;",
-                    username, name, degree, password, accessLevel.ordinal());
-
             Connection connection = ConnectDB.getConn();
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-=======
-    public static void createUser(String username, String name, String degree, String password, AccessLevel accessLevel) throws SQLException {
-       // String query = String.format("INSERT INTO id (id, name, degree, password, Permission) values %s %s %s %s %i;",
-         //   username, name, degree, password, accessLevel.ordinal);
-
-        Connection connection = ConnectDB.getConn();
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        //   ResultSet resultSet = statement.executeQuery(query);
->>>>>>> dd72e5daea7031383ff441ac18817a2ca5d9d640
-
+            PreparedStatement statement = connection.prepareStatement(
+                    "INSERT INTO id values (?, ?, ?, ?, ?)");
+            statement.setString(1, username);
+            statement.setString(2, name);
+            statement.setString(3, degree);
+            statement.setString(4, encryptPassword(password));
+            statement.setInt(5, accessLevel.ordinal());
+            statement.executeUpdate();
             System.out.println("User was created successfully");
 
             connection.close();
@@ -75,23 +58,23 @@ public class LoginServices
      * @param accessLevel Access level requested.
      * @return Returns username if successful, otherwise null.
      */
-    private static boolean login(AccessLevel accessLevel)
+    public static String login(AccessLevel accessLevel)
     {
         String username = getUsername(accessLevel);
         if(username == null)
         {
             System.out.println("Login failed.");
-            return false;
+            return null;
         }
         if(getPassword(username))
         {
             System.out.println("Login succeeded.");
-            return true;
+            return username;
         }
         else
         {
             System.out.println("Login failed.");
-            return false;
+            return null;
         }
     }
 
@@ -116,6 +99,7 @@ public class LoginServices
                 PreparedStatement statement = conn.prepareStatement("SELECT id, Permission FROM id WHERE id = ?");
                 statement.setString(1, username);
                 ResultSet resultSet = statement.executeQuery();
+                resultSet.next();
 
                 if(resultSet.getString("id") != null) //Username found in database
                 {
@@ -174,9 +158,10 @@ public class LoginServices
                 PreparedStatement statement = conn.prepareStatement("SELECT password FROM id WHERE id = ?");
                 statement.setString(1, username);
                 ResultSet resultSet = statement.executeQuery();
+                resultSet.next();
                 try
                 {
-                    if(encryptPassword(password).equals(resultSet.getString("password"))) //Correct password entered
+                    if(encryptPassword(password).equals(resultSet.getString("password").trim())) //Correct password entered
                     {
                         conn.close();
                         return true;
@@ -214,7 +199,7 @@ public class LoginServices
      * @param username Unique ID of user requesting to update password.
      * @return Boolean representing success of update request.
      */
-    private static boolean updatePassword(String username)
+    public static boolean updatePassword(String username)
     {
         //Request new password
         Scanner input = new Scanner(System.in);
@@ -232,7 +217,7 @@ public class LoginServices
                 {
                     statement.setString(1, encryptPassword(newPassword));
                     statement.setString(2, username);
-                    statement.executeUpdate();
+                    statement.execute();
                 }
                 catch(Exception e)
                 {
