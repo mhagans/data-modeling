@@ -22,17 +22,21 @@ public class Student {
 	Statement stmt = null;
    	String queryid = "SELECT * FROM Student_Form WHERE id = " + id;   
 	Connection conn = ConnectDB.getConn();
+	forms = new ArrayList();
 	try{			
 			stmt = conn.createStatement();	
 			ResultSet rs = stmt.executeQuery(queryid);
-			StudentForm sform = new StudentForm();
-			while (rs.next()) {
-				setYear(rs.getInt("year"));
-				setTerm(rs.getString("term"));
-				setDays(rs.getString("day"));
-				setTimes(rs.getString("time"));				
-			}
 			
+			while (rs.next()) {
+				StudentForm sform = new StudentForm();
+				sform.setYear(rs.getInt("year"));
+				sform.setDays(rs.getString("day"));
+				sform.setTerm(rs.getString("term"));
+				sform.setTimes(rs.getString("day"));
+				sform.setID(id);
+				forms.add(sform);
+			}
+			forms.trimToSize();
 			
 	}
 	catch (SQLException e ) {

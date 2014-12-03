@@ -59,14 +59,8 @@ public class StudentMenu {
     		
     		System.out.println("Student ID: " + stud.getID() + "\n");													
     		System.out.println("Student Name: " + stud.getName() + "\n");
-    		System.out.println("Student Degree: " + stud.getDegree() + "\n");
-    		System.out.println("Student Year: " + stud.getYear() + "\n");
-    		System.out.println("Student Term: " + stud.getTerm() + "\n");
-    		System.out.println("Student Prefered Days: " + stud.getDays() + "\n");
-    		System.out.println("Student Prefered Times: " + stud.getTimes() + "\n");
-    		//a thing for classes
-    		//show edit course listing        	
-        	System.out.println("Edit/View courses for this student? (y/n)\n");
+    		System.out.println("Student Degree: " + stud.getDegree() + "\n");        		        	
+        	System.out.println("Edit/View courses and forms for this student? (y/n)\n");
             String input = reader.next();
             if((input.toLowerCase().equals("y")) || (input.toLowerCase().equals("yes"))){
             	//go to dispclassmenu method
@@ -83,7 +77,9 @@ public class StudentMenu {
     	
     	
     	else{
-    		System.out.println("student not found, create new student? \n");		//go to create student method if not found   
+    		System.out.println("student not found, create new student?(y/n)\n");		//go to create student method if not found   
+    		String select = reader.next();
+    		if(select.toLowerCase().equals("y") || select.toLowerCase().equals("yes"))
     		createStudent();
     	}    	
     }
@@ -99,24 +95,16 @@ public class StudentMenu {
 	   	String name = reader.next();
 		System.out.println("\nStudent Degree: ");
 		String degree = reader.next();
-		System.out.println("\nStudent Year: ");
-		int year = reader.nextInt();
-		System.out.println("\nStudent Term: ");
-		String term = reader.next();
-		System.out.println("\nStudent Prefered Days (MW, TR, or MWF: ");
-		String prefdays = reader.next();
-		System.out.println("\nStudent Prefered Times (morning, afternoon, evening): ");
-		String preftimes = reader.next();		
-		Statement stmt = null;		
-		 String queryid = String.format("INSERT INTO id (id, name, degree, Permission) values %s %s %s  %d;",
-                 id, name, degree, 0);
-		 String querystud = String.format("INSERT INTO Student_Form (id, year, term, day, time) values %s %d %s %s %s;",
-                 id, year, term, prefdays, preftimes);		 
+		String nullstring = "NULL";
+		Statement stmt = null;		//INSERT INTO id (id, name, degree, Permission) values ('00624604', 'Clayton', 'cs', 0);
+		 String queryid = String.format("INSERT into id VALUES('%s', '%s', '%s', '%s', %d)", id, name, degree, nullstring, 0);
+				 //"INSERT INTO id (id, name, degree, password, Permission) values (" + "'" + id + "', " + "'" + name + "', " + "'" + degree + "', " + "NULL, " + "'0'" + ");";
+                 	 		 
 		 try{
 		    	Connection conn = ConnectDB.getConn();
 		    	stmt = conn.createStatement();	
-				stmt.executeQuery(queryid);
-				stmt.executeQuery(querystud);
+				stmt.executeUpdate(queryid);		
+				stmt.close();
 				System.out.println("\nStudent added");
 		 }		 
 		 catch (SQLException e ) {
@@ -132,14 +120,44 @@ public class StudentMenu {
 	        }
    }
    
-   private void createStudentForm(){
-	   StudentForm s = new StudentForm();
+   private void createStudentForm(Student s){
+	   Scanner reader = new Scanner(System.in);	   
+	   System.out.println("Select Year: ");
+	   int year = reader.nextInt();
+	   System.out.println("Select Term: ");
+	   String term = reader.next();
+	   System.out.println("Select prefered days for the term (MWF, TR, MW): ");
+	   String days = reader.next();
+	   System.out.println("Select prefered times (morning, afternoon, evening): ");
+	   String times = reader.next();
+	   
+	   Statement stmt = null;	
+	   
+	   String querystud = String.format("INSERT INTO Student_Form (id, year, term, day, time) values %s %d %s %s %s;",
+               s.getID(), year, term, days, times);		 
+		 try{
+		    	Connection conn = ConnectDB.getConn();
+		    	stmt = conn.createStatement();					
+				stmt.executeQuery(querystud);
+				System.out.println("\nStudent form added");
+		 }		 
+		 catch (SQLException e ) {
+	            e.printStackTrace();
+	        } finally {
+	            if (stmt != null) { try {
+					stmt.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+	          }
+	        }
 	   
    }
    
    private void displayStudentClasses(Student stud){
 	  
-	  boolean exit = true;
+	  boolean exit = true;	  
 	  while(exit){
 	  System.out.println("Student class menu for " + stud.getName() + "\n");
 	  System.out.println("1. View enrolled courses\n");
@@ -157,7 +175,7 @@ public class StudentMenu {
 		  break;
 	  case 3: 	showEnroll(stud);
 		  break;
-	  case 4:   createStudentForm();
+	  case 4:   createStudentForm(stud);
 	  	  break;
 	  case 5:   exit = false;
 		  break;
@@ -168,7 +186,8 @@ public class StudentMenu {
 	  
 	  private void viewEnrolled(Student s){
 		  System.out.println("Select a form");
-		  for(int i = 0;i<=s.forms.size();i++){
+		  if(s.forms.size()>0){
+		  for(int i = 0;i<s.forms.size();i++){
 			  System.out.println(s.forms.get(i).getTerm() + " " + s.forms.get(i).getYear());
 		  }
 		  Statement stmt = null;
@@ -194,15 +213,26 @@ public class StudentMenu {
 					} 
 	          }
 	        }
+		  }
+		  else{
+			  System.out.println("Error: No student form has been created");
+		  }
 	  }
 	  
 	  private void showAvailable(Student s){
+		  if(s.forms.size()>0){
 		  System.out.println("Select a form");
-		  for(int i = 0;i<=s.forms.size();i++){
-			  System.out.println(s.forms.get(i).getTerm() + " " + s.forms.get(i).getYear());
+		  for(int i = 0;i<s.forms.size();i++){
+			  System.out.println(i + ". " + s.forms.get(i).getTerm() + " " + s.forms.get(i).getYear());
 		  }
+		  
+		  Scanner reader = new Scanner(System.in);
+		  
+		  int selection = reader.nextInt();  
+		  
+		  
 		  Statement stmt = null;
-	    	String query = "SELECT * FROM Course WHERE term = " + s.getTerm();   	   	
+	    	String query = "SELECT * FROM Course WHERE term = " + "'" + s.forms.get(selection).getTerm().toLowerCase() + "'";   	   	
 	    	try{    		
 	    	Connection conn = ConnectDB.getConn();    	
 	    	stmt = conn.createStatement();	
@@ -211,7 +241,8 @@ public class StudentMenu {
 	    		 while (rs.next()) {    			 
 	    			System.out.println(n + ". " + rs.getString("course_number") + " " + rs.getString("name") + "\n");
 	    			n++;
-	    		 }    		 
+	    		 }
+	    		 System.out.println("--------------------------");
 	    				 		
 	    	}    	
 	    	catch (SQLException e ) {
@@ -225,15 +256,22 @@ public class StudentMenu {
 					} 
 	          }
 	        }
+	        }
+		  else{
+			  System.out.println("Error: No student form has been created");
+		  }
 	  }
 	  
 	  private void showEnroll(Student s){
 		  System.out.println("Select a form");
-		  for(int i = 0;i<=s.forms.size();i++){
-			  System.out.println(s.forms.get(i).getTerm() + " " + s.forms.get(i).getYear());
+		  if(s.forms.size()>0){
+		  for(int i = 0;i<s.forms.size();i++){
+			  System.out.println(i + ". " + s.forms.get(i).getTerm() + " " + s.forms.get(i).getYear());
 		  }
+		  Scanner reader = new Scanner(System.in);
+		  int selection = reader.nextInt();
 		  Statement stmt = null;
-	    	String query = "SELECT * FROM Course WHERE term = " + s.getTerm();   	   	
+	    	String query = "SELECT * FROM Course WHERE term = " + "'" + s.forms.get(selection).getTerm().toLowerCase() + "'";   	   	
 	    	try{    		
 	    	Connection conn = ConnectDB.getConn();    	
 	    	stmt = conn.createStatement();	
@@ -244,11 +282,11 @@ public class StudentMenu {
 	    			n++;
 	    		 }
 	    	System.out.println("Type in a CRN to enroll in that course or exit to exit: \n");
-	    	Scanner reader = new Scanner(System.in);
+	    	
 	    	String input = reader.next();
-	        while(reader.next().toLowerCase() != "exit"){
-	        	String enrollquery = String.format("INSERT INTO Form_Course (id, year, term, course_number, ranking) values %s %d %s %s %d;",
-	                    s.getID(), s.getYear(), s.getTerm(), input, 0);
+	    	
+	        String enrollquery = String.format("INSERT INTO Form_Course (id, year, term, course_number, ranking) values '%s' %d '%s' '%s' %d;",
+	        		s.forms.get(selection).getID(), s.forms.get(selection).getYear(), s.forms.get(selection).getTerm(), input, 0);
 	        	try {
 	        		stmt.executeQuery(enrollquery);
 	        	}
@@ -264,7 +302,7 @@ public class StudentMenu {
 		          }
 		        }
 	        	
-	        }
+	        
 	    		 
 	    	}    	
 	    	catch (SQLException e ) {
@@ -278,6 +316,10 @@ public class StudentMenu {
 					} 
 	          }
 	        }
+	  }
+		  else{
+			  System.out.println("Error: No student form has been created");
+		  }
 	  }
 	  
  }
